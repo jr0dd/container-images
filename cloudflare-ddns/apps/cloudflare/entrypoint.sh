@@ -22,9 +22,9 @@ fi
 if [[ -z $CRON ]]; then
     echo "[WARNING] no variable set for CRON"
     echo "[WARNING] using default time of 15 min"
-    echo "*/15 * * * *   /app/cloudflare-ddns.sh" >> $tmpfile
+    echo "*/15 * * * *   /app/cloudflare-ddns.sh > /dev/pts/0 2>&1" >> $tmpfile
   else
-    echo "$CRON   /app/cloudflare-ddns.sh" >> $tmpfile
+    echo "$CRON   /app/cloudflare-ddns.sh > /dev/pts/0 2>&1" >> $tmpfile
     echo "[INFO] CRON variable found"
 fi
 
