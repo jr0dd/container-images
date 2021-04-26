@@ -26,7 +26,7 @@ RUN \
   --disabled-password \
   --no-create-home
 
-WORKDIR /build
+WORKDIR /app
 
 # hadolint ignore=DL3008,DL3015
 RUN \
@@ -65,8 +65,10 @@ RUN \
   && ln -s /usr/local/bin/micro /usr/local/bin/emacs \
   && unset MICRO_ARCH \
   && unset MICRO_VERSION \
-  && mkdir /app \
   && chown -R kah:kah /app \
+  && export PATH=$PATH:/usr/lib/go-1.14/bin \
+  && cd /build \
+  && CGO_ENABLED=0 go build -o /bin/ticker  \
   && \
   printf "/bin/bash /shim/greeting.sh\n" >> /etc/bash.bashrc \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
@@ -79,9 +81,6 @@ RUN \
     /var/lib/apt/lists/* \
     /var/cache/apt/* \
     /var/tmp/* \
-  && CGO_ENABLED=0 /usr/lib/go-1.14/bin/go build -o /bin/ticker \
-  && \
-  rm -rf \
     /build
 
 #COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
