@@ -1,0 +1,2 @@
+kah ALL= EXEC: NOPASSWD: /usr/sbin/cron
+Defaults env_keep +="TZ"
