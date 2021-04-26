@@ -97,3 +97,5 @@ COPY ./apps/cloudflare/entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT [ "/usr/bin/tini", "--" ]
 CMD ["/entrypoint.sh"]
+
+LABEL org.opencontainers.image.source https://github.com/jr0dd/container-images
