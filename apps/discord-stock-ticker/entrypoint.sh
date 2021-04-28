@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
 
-set -eu
+set -e
 
 source "/shim/umask.sh"
 
 exec /app/ticker
 
-sleep 10
-
-exec bash /app/config.sh

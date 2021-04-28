@@ -26,6 +26,3 @@ crontab -l | grep ddns
 
 echo "[INFO] Starting cron..."
 exec sudo /usr/sbin/cron -f
-
-sleep infinity &
-wait $!

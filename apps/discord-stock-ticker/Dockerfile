@@ -1,4 +1,4 @@
-FROM golang:1.14 as builder
+FROM golang:1.16 as builder
 
 ARG VERSION=2.1.0
 ARG TARGETPLATFORM=linux/amd64
@@ -29,14 +29,6 @@ ARG TARGETPLATFORM=linux/amd64
 
 USER root
 
-RUN \
-  adduser stonks \
-  --uid 568 \
-  --group \
-  --system \
-  --disabled-password \
-  --no-create-home
-
 WORKDIR /app
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
@@ -47,21 +39,21 @@ RUN \
   && \
   apt-get install -y \
     cl-base64 \
+    jq \
   && \
   apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && apt-get autoremove -y \
   && apt-get clean \
-  && chown -R stonks:stonks /app \
+  && chown -R k8s:k8s /app \
   && chmod -R 755 /app \
   && \
   rm -rf \
     /tmp/* \
     /var/lib/apt/lists/* \
     /var/cache/apt/* \
-    /var/tmp/* \
-  && printf "umask %d" "${UMASK}" >> /etc/bash.bashrc
+    /var/tmp/*
 
-USER stonks
+USER k8s
 
 EXPOSE 8080
 
