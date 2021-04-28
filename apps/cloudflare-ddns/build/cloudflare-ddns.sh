@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
 
-set -eux
-
 CF_ZONE_API_TOKEN=$(echo -n "$CF_ZONE_API_TOKEN" | base64 -d)
 CF_DNS_API_TOKEN=$(echo -n "$CF_DNS_API_TOKEN" | base64 -d)
 
 CF_API_URL="https://api.cloudflare.com/client/v4/zones"
 
-CF_RECORD=$(curl -s -X GET \
+CF_RECORD=$(curl -sS -X GET \
   "$CF_API_URL/$CF_ZONE_API_TOKEN/dns_records?type=A" \
   -H "Authorization: Bearer $CF_DNS_API_TOKEN" \
   -H "Content-Type: application/json")
@@ -22,7 +20,7 @@ function change_record() {
     TYPE=$(echo "$CF_RECORD" | jq -r '.result[].type')
     TTL=$(echo "$CF_RECORD" | jq -r '.result[].ttl')
     PROXIED=$(echo "$CF_RECORD" | jq -r '.result[].proxied')
-    curl -s -X PUT \
+    curl -sSo /dev/null -X PUT \
     "$CF_API_URL/$CF_ZONE_API_TOKEN/dns_records/$ID" \
     -H "Authorization: Bearer $CF_DNS_API_TOKEN" \
     -H "Content-Type: application/json" \
@@ -31,7 +29,7 @@ function change_record() {
 
 if [[ "$IP" != "$OLDIP" ]]; then
     change_record
-    echo "[INFO] Updating Cloudflare DNS from "$OLDIP" to "$IP""
+    echo "[INFO] Updated Cloudflare DNS from "$OLDIP" to "$IP""
   else
     echo "[INFO] No DNS update required"
 fi
