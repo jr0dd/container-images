@@ -25,4 +25,4 @@ echo "[INFO] crontab entry:"
 crontab -l | grep ddns
 
 echo "[INFO] Starting cron..."
-exec sudo /usr/sbin/cron -f
+exec sudo /usr/sbin/cron -f ${EXTRA_ARGS}

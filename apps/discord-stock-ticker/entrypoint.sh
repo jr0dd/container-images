@@ -4,5 +4,5 @@ set -e
 
 source "/shim/umask.sh"
 
-exec /app/ticker
+exec /app/ticker ${EXTRA_ARGS}
 

@@ -2,4 +2,4 @@
 
 source "/shim/umask.sh"
 
-exec sudo /usr/sbin/cron -f
+exec sudo /usr/sbin/cron -f ${EXTRA_ARGS}
