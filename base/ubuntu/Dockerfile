@@ -1,6 +1,6 @@
-ARG VERSION=focal-20210416
+ARG VERSION
 
-ARG TARGETPLATFORM=linux/amd64
+ARG TARGETPLATFORM
 
 FROM ubuntu:${VERSION}
 
@@ -73,7 +73,7 @@ USER k8s
 
 VOLUME [ "/config" ]
 
-COPY ./shim /shim
+COPY ./base/ubuntu/shim /shim
 ENTRYPOINT [ "/usr/bin/tini", "--" ]
 
 LABEL org.opencontainers.image.source https://github.com/jr0dd/container-images

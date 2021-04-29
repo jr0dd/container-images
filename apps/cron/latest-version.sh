@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-version=$(curl -sX GET "https://api.github.com/repos/jr0dd/container-images/ubuntu/tags" | jq --raw-output '.[0].name')
+#need to fix
+version=$(curl -sX GET "http://mirrors.edge.kernel.org/ubuntu/pool/main/c/cron/" | jq --raw-output '.[0].name')
 version="${version#*v}"
 version="${version#*release-}"
 printf "%s" "${version}"

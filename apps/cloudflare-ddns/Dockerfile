@@ -1,10 +1,14 @@
+ARG VERSION
+
+ARG TARGETPLATFORM
+
 FROM ghcr.io/jr0dd/cron:latest
 
 USER root
 
 WORKDIR /app
 
-COPY ./build /build
+COPY ./apps/cloudflare-ddns/build /build
 
 RUN \
   mv /build/cloudflare-ddns.sh /app \
@@ -14,8 +18,8 @@ RUN \
 
 USER k8s
 
-COPY ./shim /shim
-COPY ./entrypoint.sh /entrypoint.sh
+COPY ./apps/cloudflare-ddns/shim /shim
+COPY ./apps/cloudflare-ddns/entrypoint.sh /entrypoint.sh
 
 CMD ["/entrypoint.sh"]
 

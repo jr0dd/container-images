@@ -1,12 +1,14 @@
 FROM ghcr.io/jr0dd/ubuntu
 
-ARG TARGETPLATFORM=linux/amd64
+ARG TARGETPLATFORM
+
+ARG VERSION
 
 USER root
 
 WORKDIR /app
 
-COPY ./build /build
+COPY ./apps/cron/build /build
 
 RUN \
   set -eux \
@@ -40,8 +42,8 @@ RUN \
 
 USER k8s
 
-COPY ./shim /shim
-COPY ./entrypoint.sh /entrypoint.sh
+COPY ./apps/cron/shim /shim
+COPY ./apps/cron/entrypoint.sh /entrypoint.sh
 
 CMD ["/entrypoint.sh"]
 ENTRYPOINT [ "/usr/bin/tini", "--" ]

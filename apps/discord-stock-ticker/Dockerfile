@@ -1,7 +1,8 @@
 FROM golang:1.16 as builder
 
-ARG VERSION=2.1.0
-ARG TARGETPLATFORM=linux/amd64
+ARG VERSION
+
+ARG TARGETPLATFORM
 
 ENV CGO_ENABLED=0 \
     GOPATH=/go \
@@ -25,14 +26,16 @@ RUN \
 
 FROM ghcr.io/jr0dd/ubuntu:latest
 
-ARG TARGETPLATFORM=linux/amd64
+ARG VERSION
+
+ARG TARGETPLATFORM
 
 USER root
 
 WORKDIR /app
 
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder /bin/ticker .
+COPY --from=builder ./etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder ./bin/ticker .
 
 RUN \
   apt-get -qq update \
@@ -57,8 +60,8 @@ USER k8s
 
 EXPOSE 8080
 
-COPY ./shim /shim
-COPY ./entrypoint.sh /entrypoint.sh
+COPY ./apps/discord-stock-ticker/shim /shim
+COPY ./apps/discord-stock-ticker/entrypoint.sh /entrypoint.sh
 
 CMD ["/entrypoint.sh"]
 
