@@ -34,8 +34,8 @@ USER root
 
 WORKDIR /app
 
-COPY --from=builder ./etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder ./bin/ticker .
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /bin/ticker .
 
 RUN \
   apt-get -qq update \
