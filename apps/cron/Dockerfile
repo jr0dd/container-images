@@ -26,6 +26,7 @@ RUN \
   && apt-get clean \
   && chown -R k8s:k8s /app \
   && chmod -R 755 /app \
+  && touch /var/log/cron.log \
   && mv /build/sudoers /etc/sudoers.d/k8s \
   && chown root:root /etc/sudoers.d/* \
   && chmod 644 /etc/sudoers.d/* \

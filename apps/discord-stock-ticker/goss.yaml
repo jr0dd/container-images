@@ -1,8 +1,15 @@
----
-process:
-  ticker:
-    running: true
-
 port:
   tcp:8080:
     listening: true
+    ip:
+    - 127.0.0.1
+process:
+  ticker:
+    running: true
+http:
+  http://localhost:8080/ticker:
+    status: 200
+    allow-insecure: false
+    no-follow-redirects: false
+    timeout: 5000
+    body: []
