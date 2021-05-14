@@ -49,6 +49,8 @@ RUN \
   && apt-get clean \
   && chown -R k8s:k8s /app \
   && chmod -R 755 /app \
+  && printf "umask %d" "${UMASK}" >> /etc/bash.bashrc \
+  && update-ca-certificates \
   && \
   rm -rf \
     /tmp/* \

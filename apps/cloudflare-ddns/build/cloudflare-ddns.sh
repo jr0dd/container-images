@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-CF_ZONE_API_TOKEN=$(echo -n "$CF_ZONE_API_TOKEN" | base64 -d)
-CF_DNS_API_TOKEN=$(echo -n "$CF_DNS_API_TOKEN" | base64 -d)
-
 CF_API_URL="https://api.cloudflare.com/client/v4/zones"
 
 CF_RECORD=$(curl -sS -X GET \

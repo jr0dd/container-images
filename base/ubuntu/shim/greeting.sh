@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 echo "
-Welcome to the base ubuntu container!
+Welcome to the Ubuntu Focal container!
 "
