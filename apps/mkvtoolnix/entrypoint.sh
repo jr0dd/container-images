@@ -16,4 +16,4 @@ if [[ ! -f /config/QtProject.conf ]]; then
 fi
 
 echo "[INFO] Starting MKVToolNix..."
-exec /app/bin/mkvtoolnix-gui -platform vnc:mode=websocket:size=1920x1080:maximize=true ${EXTRA_ARGS}
+exec /app/bin/mkvtoolnix-gui ${EXTRA_ARGS}

@@ -23,7 +23,6 @@ RUN \
   && git checkout v${VERSION} \
   && go build -o /bin/ticker
 
-
 FROM ghcr.io/jr0dd/ubuntu:latest
 
 ARG VERSION
@@ -34,7 +33,7 @@ USER root
 
 WORKDIR /app
 
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/.
 COPY --from=builder /bin/ticker .
 
 RUN \
@@ -43,6 +42,7 @@ RUN \
   apt-get install -y \
     cl-base64 \
     jq \
+    net-tools \
   && \
   apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && apt-get autoremove -y \
