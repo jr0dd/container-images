@@ -5,7 +5,6 @@ ARG VERSION
 ARG TARGETPLATFORM
 
 ARG RELEASE
-
 ENV \
   HOME="/app/heimdall" \
   NODE_ENV="production"
@@ -31,7 +30,7 @@ RUN \
   tar xzvf - --strip-components=1 \
   && npm set audit=false \
   && npm set fund=false \
-  && npm install \
+  && NODE_ENV="development" npm install \
   && cp -v .env.example .env \
   && npm run build \
   && npm prune --production \
