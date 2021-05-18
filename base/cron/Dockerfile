@@ -16,7 +16,6 @@ RUN \
   apt-get -qq update \
   && \
   apt-get install -y \
-    cl-base64 \
     cron \
     jq \
     sudo \

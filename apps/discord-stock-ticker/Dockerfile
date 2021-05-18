@@ -33,14 +33,12 @@ USER root
 
 WORKDIR /app
 
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/.
 COPY --from=builder /bin/ticker .
 
 RUN \
   apt-get -qq update \
   && \
   apt-get install -y \
-    cl-base64 \
     jq \
     net-tools \
   && \
