@@ -2,6 +2,8 @@
 
 source "/shim/umask.sh"
 
+export NODE_ENV="production"
+
 if [[ ! -d /config/uploads ]]; then
     mkdir -p /config/uploads
 fi
@@ -15,7 +17,7 @@ if [[ ! -f "/config/env" ]]; then
     sed -i 's|DB_TYPE=mysql|DB_TYPE=sqlite|g' /config/env
     sed -i 's|DB_STORAGE=$|DB_STORAGE=/config/app.db|g' /config/env
     sed -i 's|UPLOAD_DIR=$|UPLOAD_DIR=/config/uploads|g' /config/env
-    
+
     npm run db:migrate
     npm run db:seed
 fi

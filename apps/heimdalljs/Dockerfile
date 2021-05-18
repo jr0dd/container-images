@@ -54,10 +54,6 @@ RUN \
 
 USER k8s
 
-ENV \
-  HOME="/app/heimdall" \
-  NODE_ENV="production"
-
 EXPOSE 3000
 
 COPY ./apps/heimdalljs/shim /shim
