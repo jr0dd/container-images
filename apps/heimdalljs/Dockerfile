@@ -6,6 +6,10 @@ ARG TARGETPLATFORM
 
 ARG RELEASE
 
+ENV \
+  HOME="/app/heimdall" \
+  NODE_ENV="production"
+
 USER root
 
 WORKDIR /app/heimdall
@@ -16,12 +20,9 @@ RUN \
   apt-get -qq update \
   && \
   apt-get install -y \
-    g++ \
     jq \
-    make \
     nodejs \
     npm \
-    net-tools \
   && \
   export RELEASE=$(curl -o- \
   -fsSL "https://api.github.com/repos/linuxserver/heimdalljs/commits/master" | \
@@ -30,14 +31,10 @@ RUN \
   tar xzvf - --strip-components=1 \
   && npm set audit=false \
   && npm set fund=false \
-  && NODE_ENV="development" npm install \
+  && npm install \
+  && cp -v .env.example .env \
   && npm run build \
   && npm prune --production \
-  && \
-  apt-get remove -y \
-    g++ \
-    jq \
-    make \
   && \
   apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && apt-get autoremove -y \

@@ -2,8 +2,6 @@
 
 source "/shim/umask.sh"
 
-export NODE_ENV="production"
-
 if [[ ! -d /config/uploads ]]; then
     mkdir -p /config/uploads
 fi
