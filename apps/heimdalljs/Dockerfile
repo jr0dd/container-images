@@ -5,6 +5,7 @@ ARG VERSION
 ARG TARGETPLATFORM
 
 ARG RELEASE
+
 ENV \
   HOME="/app/heimdall" \
   NODE_ENV="production"
@@ -20,6 +21,7 @@ RUN \
   && \
   apt-get install -y \
     jq \
+    net-tools \
     nodejs \
     npm \
   && \
@@ -30,7 +32,8 @@ RUN \
   tar xzvf - --strip-components=1 \
   && npm set audit=false \
   && npm set fund=false \
-  && NODE_ENV="development" npm install \
+  && NODE_ENV="development" \
+  npm install --cache /tmp/empty-cache \
   && cp -v .env.example .env \
   && npm run build \
   && npm prune --production \

@@ -15,7 +15,6 @@ if [[ ! -f "/config/env" ]]; then
     sed -i 's|DB_TYPE=mysql|DB_TYPE=sqlite|g' /config/env
     sed -i 's|DB_STORAGE=$|DB_STORAGE=/config/app.db|g' /config/env
     sed -i 's|UPLOAD_DIR=$|UPLOAD_DIR=/config/uploads|g' /config/env
-    npm run db:seed
 fi
 
 exec npm run server ${EXTRA_ARGS}
