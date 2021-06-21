@@ -2,4 +2,4 @@
 
 source "/shim/umask.sh"
 
-exec /app/ticker ${EXTRA_ARGS}
+exec /app/ticker -address 0.0.0.0:8585 ${EXTRA_ARGS}

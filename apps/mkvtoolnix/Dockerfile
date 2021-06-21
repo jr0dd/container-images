@@ -8,6 +8,12 @@ USER root
 
 WORKDIR /build
 
+
+ENV HOME=/config \
+    XDG_CONFIG_HOME=/config \
+    XDG_DATA_HOME=/config \
+    LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/app/lib
+
 RUN \
   apt-get -qq update \
   && \
@@ -28,6 +34,7 @@ RUN \
     libboost-system-dev \
     libbz2-dev \
     libcmark-dev \
+    libcurl4 \
     libdvdread7 \
     libflac-dev \
     libfmt-dev \
@@ -38,6 +45,9 @@ RUN \
     libpcre2-8-0 \
     libpcre2-dev \
     libqt5multimedia5 \
+    libqt5svg5-dev \
+    libqt5xml5 \
+    libtool \
     libvorbis-dev \
     make \
     pkg-config \
@@ -48,11 +58,6 @@ RUN \
     ruby \
     xsltproc \
     zlib1g-dev
-
-
-ENV HOME=/config \
-    XDG_CONFIG_HOME=/config \
-    XDG_DATA_HOME=/config
 
 RUN \
   git clone https://gitlab.com/mbunkus/mkvtoolnix.git \
@@ -67,6 +72,44 @@ RUN \
   && rake -j$(nproc) install \
   && \
   strip -v /app/bin/mkv*
+
+RUN \
+  git clone https://github.com/MediaArea/ZenLib.git \
+  && cd ZenLib/Project/GNU/Library \
+  && ./autogen.sh \
+  && ./configure \
+    --prefix=/app \
+    --enable-shared \
+  && make -j$(nproc) install
+
+RUN \
+  git clone https://github.com/MediaArea/MediaInfoLib.git \
+  && cd MediaInfoLib/Project/GNU/Library \
+  && ./autogen.sh \
+  && ./configure \
+    --prefix=/app \
+    --enable-shared \
+  && make -j$(nproc) install
+
+RUN \
+  git clone https://github.com/MediaArea/MediaInfo.git \
+  && cd MediaInfo/Project/GNU/CLI \
+  && ./autogen.sh \
+  && ./configure \
+    --prefix=/app \
+    --enable-shared \
+  && make -j$(nproc) install
+
+RUN \
+  cd MediaInfo/Project/QMake/GUI \
+  && sed -i 's/usr/app/' MediaInfoQt.pro \
+  && qmake \
+     STATIC_LIBS=no \
+     MediaInfoQt.pro \
+  && make -j$(nproc) install \
+  && strip -v \
+    /app/bin/mediainfo* \
+    /app/lib/*so*
 
 COPY ./apps/mkvtoolnix/build /app/.
 
@@ -97,13 +140,11 @@ RUN \
     liblzo2-dev \
     libmagic-dev \
     libogg-dev \
-    libpcre2-8-0 \
     libpcre2-dev \
     libtool \
     libvorbis-dev \
     libqt5multimedia5 \
     make \
-    novnc \
     pkg-config \
     qtbase5-dev-tools \
     qtmultimedia5-dev \

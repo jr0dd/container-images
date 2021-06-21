@@ -1,11 +1,6 @@
-port:
-  tcp:8080:
-    listening: true
-    ip:
-    - 127.0.0.1
 process:
   ticker:
     running: true
 http:
-  http://localhost:8080/ticker:
+  http://localhost:8585/ticker:
     status: 200
