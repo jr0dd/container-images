@@ -4,13 +4,14 @@ ARG TARGETPLATFORM
 
 FROM ubuntu:${VERSION}
 
+USER root
+
 ENV \
   DEBCONF_NONINTERACTIVE_SEEN=true \
   DEBIAN_FRONTEND="noninteractive" \
   APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn \
   TINI_VERSION=0.19.0 \
-  UMASK=0002 \
-  MICRO_CONFIG_HOME=/tmp
+  UMASK=0002
 
 RUN \
   adduser k8s \
@@ -47,10 +48,10 @@ RUN \
   && \
   localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
   && \
-  ln -s /usr/bin/vim.tiny /usr/local/bin/vi \
-  && ln -s /usr/bin/vim.tiny /usr/local/bin/vim \
-  && ln -s /usr/bin/vim.tiny /usr/local/bin/nano \
-  && ln -s /usr/bin/vim.tiny /usr/local/bin/emacs \
+  ln -sf /usr/bin/vim.tiny /usr/local/bin/vi \
+  && ln -sf /usr/bin/vim.tiny /usr/local/bin/vim \
+  && ln -sf /usr/bin/vim.tiny /usr/local/bin/nano \
+  && ln -sf /usr/bin/vim.tiny /usr/local/bin/emacs \
   && chown -R k8s:k8s /app \
   && \
   printf "/bin/bash /shim/greeting.sh\n" >> /etc/bash.bashrc \

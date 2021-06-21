@@ -5,7 +5,7 @@ Welcome to the discord-stock-ticker container!
 
 To list current running bots run:
 "
-echo -e "\033[96mcurl -s localhost:8585/ticker | jq -r\033[0m"
+echo -e "\033[96mcurl -s localhost:8080/ticker | jq -r\033[0m"
 
 echo "
 * Repository: https://github.com/jr0dd/container-images/

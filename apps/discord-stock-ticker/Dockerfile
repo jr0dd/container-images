@@ -58,7 +58,7 @@ RUN \
 
 USER k8s
 
-EXPOSE 8585
+EXPOSE 8080
 
 COPY ./apps/discord-stock-ticker/shim /shim
 COPY ./apps/discord-stock-ticker/entrypoint.sh /entrypoint.sh
