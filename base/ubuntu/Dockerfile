@@ -6,6 +6,8 @@ FROM ubuntu:${VERSION}
 
 USER root
 
+# DEBIAN_FRONTEND: https://askubuntu.com/questions/972516/debian-frontend-environment-variable
+# APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE: http://stackoverflow.com/questions/48162574/ddg#4946262
 ENV \
   DEBCONF_NONINTERACTIVE_SEEN=true \
   DEBIAN_FRONTEND="noninteractive" \
