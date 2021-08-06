@@ -1,8 +1,0 @@
-port:                                                                                                                                                                                                                                                                                                                       
-  tcp:5900:
-    listening: true
-    ip:
-    - 127.0.0.1
-process:
-  mediainfo-gui:
-    running: true

@@ -77,4 +77,5 @@ VOLUME [ "/config" ]
 COPY ./base/ubuntu/shim /shim
 ENTRYPOINT [ "/usr/bin/tini", "--" ]
 
+LABEL "maintainer"="j_r0dd <jr0dd@@users.noreply.github.com>"
 LABEL org.opencontainers.image.source https://github.com/jr0dd/container-images

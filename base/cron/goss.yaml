@@ -1,6 +1,0 @@
-file:
-  /var/log/cron.log:
-    exists: true
-process:
-  cron:
-    running: true
