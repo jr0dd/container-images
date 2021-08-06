@@ -45,18 +45,18 @@ jobs:
     name: Run hadolint
     runs-on: ubuntu-20.04
     steps:
-    - name: Get app token
-      id: get-app-token
-      uses: getsentry/action-github-app-token@v1
-      with:
-        app_id: ${{ secrets.APP_ID }}
-        private_key: ${{ secrets.APP_PRIVATE_KEY }}
+    # - name: Get app token
+    #   id: get-app-token
+    #   uses: getsentry/action-github-app-token@v1
+    #   with:
+    #     app_id: ${{ secrets.APP_ID }}
+    #     private_key: ${{ secrets.APP_PRIVATE_KEY }}
     - name: Checkout
       uses: actions/checkout@v2
     - name: hadolint
       uses: reviewdog/action-hadolint@v1.23.0
       with:
-        github_token: ${{ steps.get-app-token.outputs.token }}
+        github_token: ${{ secret.GITHUB_TOKEN }}
         reporter: github-pr-review
         filter_mode: diff_context
         fail_on_error: true
