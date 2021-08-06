@@ -20,7 +20,7 @@ jobs:
     #     private_key: ${{ secrets.APP_PRIVATE_KEY }}
     - uses: actions/checkout@v2
       with:
-        token: ${{ secret.GITHUB_TOKEN }}
+        token: ${{ secrets.GITHUB_TOKEN }}
         fetch-depth: 1
     - name: Fetch new base versions
       run: |
