@@ -2,9 +2,7 @@
 process:
   ticker:
     running: true
-port:
-  tcp:8080:
-    listening: true
+    
 http:
   http://localhost:8080/ticker:
     status: 200
