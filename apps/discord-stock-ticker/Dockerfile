@@ -23,7 +23,7 @@ RUN \
   && git checkout v${VERSION} \
   && go build -o /bin/ticker
 
-FROM ghcr.io/jr0dd/ubuntu:latest
+FROM ghcr.io/k8s-at-home/ubuntu:latest
 
 ARG VERSION
 
@@ -40,12 +40,11 @@ RUN \
   && \
   apt-get install -y \
     jq \
-    net-tools \
   && \
   apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && apt-get autoremove -y \
   && apt-get clean \
-  && chown -R k8s:k8s /app \
+  && chown -R kah:kah /app \
   && chmod -R 755 /app \
   && printf "umask %d" "${UMASK}" >> /etc/bash.bashrc \
   && update-ca-certificates \
@@ -56,7 +55,7 @@ RUN \
     /var/cache/apt/* \
     /var/tmp/*
 
-USER k8s
+USER kah
 
 EXPOSE 8080
 

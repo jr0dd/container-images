@@ -56,7 +56,7 @@ RUN \
   && ln -sf /usr/bin/vim.tiny /usr/local/bin/emacs \
   && chown -R k8s:k8s /app \
   && \
-  printf "/bin/bash /shim/greeting.sh\n" >> /etc/bash.bashrc \
+  echo "/bin/bash /shim/greeting.sh\n" >> /etc/bash.bashrc \
   && \
   apt-get remove -y jq \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
