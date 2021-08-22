@@ -12,12 +12,6 @@ jobs:
   get-version:
     runs-on: ubuntu-20.04
     steps:
-    # - name: Get app token
-    #   id: get-app-token
-    #   uses: getsentry/action-github-app-token@v1
-    #   with:
-    #     app_id: ${{ secrets.APP_ID }}
-    #     private_key: ${{ secrets.APP_PRIVATE_KEY }}
     - uses: actions/checkout@v2
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -47,8 +41,8 @@ jobs:
     - name: Add, commit and push to applications version file
       run: |
         if [[ -n $(git status --porcelain) ]]; then
-          git config user.name "jr0dd"
-          git config user.email "jr0dd@users.noreply.github.com"
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
           git add -A
           git commit -sam "chore: add new release versions" || exit 0
           git push

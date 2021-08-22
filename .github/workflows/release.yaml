@@ -40,7 +40,6 @@ jobs:
       run: |
         CONTAINERS=$(jq --raw-output '.changed_files | fromjson | .[] |= sub("(?<filepath>(?<first_directory>(?<root1>[/]?)[^/]+/)(?<second_directory>(?<root2>[/]?)[^/]+)(?<extra_paths>.+))"; "\(.second_directory)") | unique' changes.json)
         echo ::set-output name=containers::${CONTAINERS}
-
   hadolint:
     name: Run hadolint
     runs-on: ubuntu-20.04
@@ -97,7 +96,6 @@ jobs:
           echo ::set-output name=cache_from::"type=local,src=/tmp/.buildx-cache"
           echo ::set-output name=cache_to::"type=local,dest=/tmp/.buildx-cache,mode=max"
         fi
-
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
       with:
@@ -108,8 +106,8 @@ jobs:
       if: github.event_name != 'pull_request'
       with:
         registry: ghcr.io
-        username: jr0dd
-        password: ${{ secrets.GHCR_TOKEN }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     # Install and configure Buildx
     - name: Set up Docker Buildx
@@ -127,7 +125,6 @@ jobs:
         key: ${{ secrets.DOCKER_REGISTRY }}/${{ github.repository_owner }}/${{ matrix.container }}
         restore-keys: |
           ${{ secrets.DOCKER_REGISTRY }}/${{ github.repository_owner }}/${{ matrix.container }}
-
     # Install the GOSS testing framework
     - name: Set up goss/dgoss
       uses: e1himself/goss-installation-action@v1.0.3
@@ -156,7 +153,6 @@ jobs:
         GOSS_FILE: ./${{ steps.prep.outputs.category }}/${{ matrix.container }}/goss.yaml
       run: |
         dgoss run ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:test
-
     # Push if not a PR, otherwise just test the build process for all requested platforms
     - name: Build and Push
       uses: docker/build-push-action@v2
