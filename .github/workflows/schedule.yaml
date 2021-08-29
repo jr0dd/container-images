@@ -32,7 +32,7 @@ jobs:
         find ./apps -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | while read app; do
           if test -f "./apps/${app}/latest-version.sh"; then
             version=$(bash "./apps/${app}/latest-version.sh")
-            if [[ ! -z "${version}" || "${version}" != "null" ]]; then
+            if [[ ! -z "${version}" || "${version}" != "null" || ! "${version}" =~ "beta" || ! "${version}" =~ "alpha" ]]; then
               echo "${version}" | tee "./apps/${app}/VERSION" > /dev/null
               echo "${app} ${version}"
             fi
