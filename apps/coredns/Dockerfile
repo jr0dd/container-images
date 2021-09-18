@@ -15,11 +15,14 @@ WORKDIR /go/src/coredns
 RUN \
   export GOOS \
   && GOOS=$(echo ${TARGETPLATFORM} | cut -d / -f1) \
+  && export GOARCH \
+  && GOARCH=$(echo ${TARGETPLATFORM} | cut -d / -f2) \
   && export GOARM \
-  && GOARM=$(echo ${TARGETPLATFORM} | cut -d / -f2) \
+  && GOARM=$(echo ${TARGETPLATFORM} | cut -d / -f3 | cut -c2-) \
   && apk --no-cache --no-progress add ca-certificates git libcap \
   && update-ca-certificates \
-  && git clone https://github.com/coredns/coredns.git --branch "${VERSION}" --depth 1 --single-branch . \
+  && git clone https://github.com/coredns/coredns.git . \
+  && git checkout v${VERSION} \
   && sed -i '/^kubernetes:kubernetes/a k8s_gateway:github.com/ori-edge/k8s_gateway' plugin.cfg
   
 RUN \
