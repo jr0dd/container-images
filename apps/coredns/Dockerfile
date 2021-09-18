@@ -18,20 +18,17 @@ RUN \
   && export GOARCH \
   && GOARCH=$(echo ${TARGETPLATFORM} | cut -d / -f2) \
   && export GOARM \
-  && GOARM=$(echo ${TARGETPLATFORM} | cut -d / -f3 | cut -c2-)
+  && GOARM=$(echo ${TARGETPLATFORM} | cut -d / -f3 | cut -c2-) \
+  && apk add --no-cache ca-certificates git \
+  && update-ca-certificates \
+  && git clone https://github.com/coredns/coredns.git . \
+  && git checkout v${VERSION}
 
 RUN \
-  apk add --no-cache \
-  git \
-  ca-certificates
-
-RUN \
-  git clone https://github.com/coredns/coredns.git . \
-  && git checkout v${VERSION} \
-  && sed -i '/^kubernetes:kubernetes/a k8s_gateway:github.com/ori-edge/k8s_gateway' plugin.cfg \
-  && go get github.com/ori-edge/k8s_gateway \
+  go get github.com/ori-edge/k8s_gateway \
   && go generate \
   && go mod tidy \
+  && sed -i '/^kubernetes:kubernetes/a k8s_gateway:github.com/ori-edge/k8s_gateway' plugin.cfg \
   && go build -ldflags "-s -w -X github.com/coredns/coredns/coremain.GitCommit=$(git describe --always)" -o coredns
 
 COPY --from=builder /go/src/coredns/coredns /coredns
