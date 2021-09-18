@@ -1,5 +1,5 @@
 
-FROM docker.io/golang:1.17.1-alpine as builder
+FROM docker.io/golang:1.17.1 as builder
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -10,7 +10,7 @@ ENV CGO_ENABLED=0 \
     GOBIN=/go/bin \
     GO111MODULE=on
 
-WORKDIR /go/src/coredns
+WORKDIR /build
 
 RUN \
   export GOOS \
@@ -19,10 +19,6 @@ RUN \
   && GOARCH=$(echo ${TARGETPLATFORM} | cut -d / -f2) \
   && export GOARM \
   && GOARM=$(echo ${TARGETPLATFORM} | cut -d / -f3 | cut -c2-)
-
-RUN \
-  apk --no-cache --no-progress add ca-certificates git libcap \
-  && update-ca-certificates
 
 RUN \
   git clone https://github.com/coredns/coredns.git . \
@@ -36,14 +32,18 @@ RUN \
   && go build -ldflags "-s -w -X github.com/coredns/coredns/coremain.GitCommit=$(git describe --always)" -o coredns \
   && setcap cap_net_bind_service=+ep ./coredns
 
-FROM gcr.io/distroless/static:nonroot
+FROM debian:stable-slim
 
-ARG VERSION
+RUN \
+  apt-get update \
+  && apt-get -uy upgrade \
+  && apt-get -y install ca-certificates \
+  && update-ca-certificates
 
-COPY --from=builder /go/src/coredns/coredns /coredns
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+FROM scratch
 
-USER nonroot:nonroot
+COPY --from=0 /etc/ssl/certs /etc/ssl/certs
+COPY --from=builder /build/coredns .
 
 EXPOSE 53 53/udp
 
