@@ -46,7 +46,7 @@ COPY --from=builder /build/coredns .
 
 EXPOSE 53 53/udp
 
-CMD ["/coredns", "-conf", "/config/Corefile"]
+ENTRYPOINT ["/coredns", "-conf", "/config/Corefile"]
 
 LABEL "maintainer"="j_r0dd <jr0dd@@users.noreply.github.com>"
 LABEL org.opencontainers.image.source https://github.com/jr0dd/container-images
