@@ -1,5 +1,5 @@
 
-FROM docker.io/golang:1.17.1-alpine as builder
+FROM docker.io/golang:1.17.0-alpine as builder
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -18,8 +18,10 @@ RUN \
   && export GOARCH \
   && GOARCH=$(echo ${TARGETPLATFORM} | cut -d / -f2) \
   && export GOARM \
-  && GOARM=$(echo ${TARGETPLATFORM} | cut -d / -f3 | cut -c2-) \
-  && apk add --no-cache ca-certificates git \
+  && GOARM=$(echo ${TARGETPLATFORM} | cut -d / -f3 | cut -c2-)
+
+RUN \
+  apk --no-cache add ca-certificates git \
   && update-ca-certificates \
   && git clone https://github.com/coredns/coredns.git . \
   && git checkout v${VERSION}
