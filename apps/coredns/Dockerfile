@@ -18,10 +18,14 @@ RUN \
   && export GOARCH \
   && GOARCH=$(echo ${TARGETPLATFORM} | cut -d / -f2) \
   && export GOARM \
-  && GOARM=$(echo ${TARGETPLATFORM} | cut -d / -f3 | cut -c2-) \
-  && apk --no-cache --no-progress add ca-certificates git libcap \
-  && update-ca-certificates \
-  && git clone https://github.com/coredns/coredns.git . \
+  && GOARM=$(echo ${TARGETPLATFORM} | cut -d / -f3 | cut -c2-)
+
+RUN \
+  apk --no-cache --no-progress add ca-certificates git libcap \
+  && update-ca-certificates
+
+RUN \
+  git clone https://github.com/coredns/coredns.git . \
   && git checkout v${VERSION} \
   && sed -i '/^kubernetes:kubernetes/a k8s_gateway:github.com/ori-edge/k8s_gateway' plugin.cfg
   
