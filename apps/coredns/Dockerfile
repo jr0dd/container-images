@@ -29,8 +29,7 @@ RUN \
   go get github.com/ori-edge/k8s_gateway \
   && go generate \
   && go mod tidy \
-  && go build -ldflags "-s -w -X github.com/coredns/coredns/coremain.GitCommit=$(git describe --always)" -o coredns \
-  && setcap cap_net_bind_service=+ep ./coredns
+  && go build -ldflags "-s -w -X github.com/coredns/coredns/coremain.GitCommit=$(git describe --always)" -o coredns
 
 FROM debian:stable-slim
 
