@@ -1,7 +1,7 @@
 FROM docker.io/golang:1.17.0-alpine as builder
 
 ARG TARGETPLATFORM
-ARG BUILDPLATFORM
+
 ARG VERSION
 
 ENV CGO_ENABLED=0 \
