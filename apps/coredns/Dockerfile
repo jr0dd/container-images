@@ -19,7 +19,7 @@ RUN \
   && GOARCH=$(echo ${TARGETPLATFORM} | cut -d / -f2) \
   && export GOARM \
   && GOARM=$(echo ${TARGETPLATFORM} | cut -d / -f3 | cut -c2-) \
-  && git clone https://github.com/coredns/coredns.git --branch "${VERSION}" --depth 1 --single-branch . \
+  && git clone https://github.com/coredns/coredns.git --branch v${VERSION} --depth 1 --single-branch . \
   && sed -i '/^kubernetes:kubernetes/a k8s_gateway:github.com/ori-edge/k8s_gateway' plugin.cfg
 
 RUN \
