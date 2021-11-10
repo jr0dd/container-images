@@ -6,7 +6,7 @@ RUN \
   git clone https://github.com/jr0dd/wyoa-bot.git /app \
   && npm install package.json
 
-COPY config.json /app
+COPY ./apps/wyoa-bot/config.json /app
 
 CMD ["node", "index.js"]
 
