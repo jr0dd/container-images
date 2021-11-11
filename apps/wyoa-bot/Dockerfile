@@ -6,7 +6,7 @@ RUN \
   git clone https://github.com/jr0dd/wyoa-bot.git /app \
   && npm install package.json
 
-COPY ./apps/wyoa-bot/config.json /entrypoint.sh
+COPY ./apps/wyoa-bot/entrypoint.sh /entrypoint.sh
 
 CMD ["/entrypoint.sh"]
 
