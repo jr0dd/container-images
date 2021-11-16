@@ -10,4 +10,4 @@ cat << EOF > /app/config.json
 }
 EOF
 
-exec node index.js
+node index.js
