@@ -4,9 +4,12 @@ set -eu
 
 cat << EOF > /app/config.json
 {
-    "token": "${TOKEN}",
-    "clientId": "904197696158572596",
-    "ownerId": "712785334903242834"
+  "token": "${TOKEN}",
+  "clientId": "900047624781037598",
+  "ownerID": "712785334903242834",
+  "apiKeys": {
+	  "googleApi": "${GOOGLE_API}"
+  }
 }
 EOF
 
