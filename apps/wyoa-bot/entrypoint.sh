@@ -10,7 +10,8 @@ cat << EOF > /app/config.json
   "apiKeys": {
 	  "youtube": "${YOUTUBE_API}",
     "finnhub": "${FINNHUB_API}",
-    "iex": "${IEX_API}"
+    "iex": "${IEX_API}",
+    "ngrok: "${NGROK_API}
   }
 }
 EOF
