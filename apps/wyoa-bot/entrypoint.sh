@@ -11,7 +11,7 @@ cat << EOF > /app/config.json
 	  "youtube": "${YOUTUBE_API}",
     "finnhub": "${FINNHUB_API}",
     "iex": "${IEX_API}",
-    "ngrok: "${NGROK_API}
+    "twitter": "${TWITTER_API}"
   }
 }
 EOF
