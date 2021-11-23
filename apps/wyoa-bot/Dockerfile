@@ -68,6 +68,8 @@ RUN \
     /var/cache/apt/* \
     /var/tmp/*
 
+EXPOSE 4242
+
 COPY ./apps/wyoa-bot/entrypoint.sh /entrypoint.sh
 
 CMD ["bash", "/entrypoint.sh"]
