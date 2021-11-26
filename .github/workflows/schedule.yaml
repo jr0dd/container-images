@@ -5,14 +5,17 @@ on:
   schedule:
   - cron: "0 */4 * * *"
 
+env:
+  TOKEN: ${{ secrets.PAT }}
+
 jobs:
   get-version:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        fetch-depth: 1
+        fetch-depth: 1  
     - name: Fetch new base versions
       run: |
         find ./base -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | while read app; do

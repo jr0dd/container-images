@@ -3,6 +3,9 @@ name: WYOA Release
 on:
   workflow_dispatch:
 
+env:
+  TOKEN: ${{ secrets.PAT }}
+
 # Detect which folders in project-root (which contain the containers) contain changes
 jobs:
   build:
