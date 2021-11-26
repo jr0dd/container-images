@@ -11,7 +11,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        token: ${{ secrets.PAT }}
+        token: ${{ secrets.GITHUB_TOKEN }}
         fetch-depth: 1
     - name: Fetch new base versions
       run: |
