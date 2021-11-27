@@ -8,6 +8,7 @@ cat << EOF > /app/config.json
   "clientId": "904197696158572596",
   "ownerID": "712785334903242834",
   "apiKeys": {
+    "express": "${EXPRESS_JWT}",
     "youtube": "${YOUTUBE_API}",
     "finnhub": "${FINNHUB_API}",
     "iex": "${IEX_API}",
