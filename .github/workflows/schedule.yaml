@@ -1,7 +1,6 @@
 name: Fetch New Versions
 
 on:
-  repository_dispatch:
   workflow_dispatch:
   schedule:
     - cron: "* */1 * * *"
