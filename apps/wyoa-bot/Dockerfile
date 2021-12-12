@@ -27,7 +27,8 @@ RUN \
     libcups2 \
     libdrm2 \
     libgbm1 \
-    libgtk-3-0 \ 
+    libgtk-3-0 \
+    libxtst6 \
     wget
 
 RUN \
