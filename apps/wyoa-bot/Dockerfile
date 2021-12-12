@@ -29,6 +29,9 @@ RUN \
     libgbm1 \
     libgtk-3-0 \
     libxtst6 \
+    libnss3 \
+    libxss1 \
+    libasound2 \
     wget
 
 RUN \
