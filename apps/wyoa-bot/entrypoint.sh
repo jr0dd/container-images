@@ -8,6 +8,10 @@ cat << EOF > /app/config.json
   "clientId": "904197696158572596",
   "ownerID": "712785334903242834",
   "apiKeys": {
+    "whalestream": {
+      "staging": "${WHALESTREAM_STAGING}",
+      "production": "${WHALESTREAM_PRODUCTION}"
+    },
     "express": "${EXPRESS_JWT}",
     "youtube": "${YOUTUBE_API}",
     "finnhub": "${FINNHUB_API}",
