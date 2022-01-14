@@ -14,6 +14,16 @@ cat << EOF > /app/config.json
     },
     "express": "${EXPRESS_JWT}",
     "finnhub": "${FINNHUB_API}"
+  },
+  "webhooks": {
+    "premium": {
+      "highlyUnusual": "904074376796835881",
+      "unusual": "904080455157026917"
+    },
+    "free": {
+      "highlyUnusual": "904071329551089745",
+      "unusual": "904085056044273684"
+    }
   }
 }
 EOF

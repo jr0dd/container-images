@@ -17,6 +17,9 @@ cat << EOF > /app/config.json
     "finnhub": "${FINNHUB_API}",
     "iex": "${IEX_API}",
     "twitter": "${TWITTER_API}"
+  },
+  "webhooks": {
+    "whalestream": "779557077235400711"
   }
 }
 EOF
