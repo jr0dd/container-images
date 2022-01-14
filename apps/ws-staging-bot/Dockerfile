@@ -63,8 +63,8 @@ USER k8s
 
 EXPOSE 3000
 
-COPY ./apps/whalestream-bot/shim /shim
-COPY ./apps/whalestream-bot/entrypoint.sh /entrypoint.sh
+COPY ./apps/ws-staging-bot/shim /shim
+COPY ./apps/ws-staging-bot/entrypoint.sh /entrypoint.sh
 
 CMD ["/entrypoint.sh"]
 
