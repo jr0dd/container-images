@@ -4,7 +4,7 @@ set -eu
 
 cat << EOF > /app/config.json
 {
-  "token": "${TOKEN}",
+  "token": "${DISCORD_TOKEN}",
   "clientId": "927621519859929148",
   "ownerID": "712785334903242834",
   "apiKeys": {
