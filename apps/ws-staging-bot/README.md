@@ -1,1 +1,1 @@
-# whalestream-bot
+# ws-staging-bot
