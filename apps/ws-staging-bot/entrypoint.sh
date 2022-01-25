@@ -2,4 +2,4 @@
 
 set -eu
 
-exec node index.js
+exec node /app/index.js
