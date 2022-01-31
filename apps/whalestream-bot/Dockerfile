@@ -39,15 +39,15 @@ RUN \
   export TOKEN=$(cat /run/secrets/github_token) \
   && curl -sL https://deb.nodesource.com/setup_17.x | bash - \
   && \
-  curl -sL https://github.com/itfoundry/Poppins/archive/refs/tags/v4.003.tar.gz -o - | tar xJf - \
-  && mkdir -p /usr/share/fonts/truetype/google-fonts \
-  && find . -name "*.ttx" -exec install -m644 {} /usr/share/fonts/truetype/google-fonts/ \
-  && \
   apt-get install -y \
     nodejs \
   && git clone https://jr0dd:${TOKEN}@github.com/jr0dd/whalestream-bot.git /app \
   && git checkout v${VERSION} \
   && npm install \
+  && \
+  curl -sL https://github.com/itfoundry/Poppins/archive/refs/tags/v4.003.tar.gz -o- | tar xzf - \
+  && mkdir -p /usr/share/fonts/truetype/google-fonts \
+  && find . -name "*.ttx" -exec install -m644 {} /usr/share/fonts/truetype/google-fonts/ \; \
   && \
   apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && apt-get autoremove -y \
