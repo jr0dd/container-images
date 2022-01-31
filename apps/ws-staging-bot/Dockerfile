@@ -39,6 +39,10 @@ RUN \
   export TOKEN=$(cat /run/secrets/github_token) \
   && curl -sL https://deb.nodesource.com/setup_17.x | bash - \
   && \
+  curl -sL https://github.com/itfoundry/Poppins/archive/refs/tags/v4.003.tar.gz -o - | tar xJf - \
+  && mkdir -p /usr/share/fonts/truetype/google-fonts \
+  && find . -name "*.ttx" -exec install -m644 {} /usr/share/fonts/truetype/google-fonts/ \
+  && \
   apt-get install -y \
     nodejs \
   && git clone https://jr0dd:${TOKEN}@github.com/jr0dd/ws-staging-bot.git /app \
@@ -54,10 +58,13 @@ RUN \
   && update-ca-certificates \
   && \
   rm -rf \
+    Poppins* \
     /tmp/* \
     /var/lib/apt/lists/* \
     /var/cache/apt/* \
-    /var/tmp/*
+    /var/tmp/* \
+  && \
+  fc-cache -f
 
 USER k8s
 
