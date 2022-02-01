@@ -45,10 +45,6 @@ RUN \
   && git checkout v${VERSION} \
   && npm install \
   && \
-  curl -sL https://github.com/itfoundry/Poppins/archive/refs/tags/v4.003.tar.gz -o- | tar xzf - \
-  && mkdir -p /usr/share/fonts/truetype/google-fonts \
-  && find . -name "*.ttx" -exec install -m644 {} /usr/share/fonts/truetype/google-fonts/ \; \
-  && \
   apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && apt-get autoremove -y \
   && apt-get clean \
@@ -62,9 +58,14 @@ RUN \
     /tmp/* \
     /var/lib/apt/lists/* \
     /var/cache/apt/* \
-    /var/tmp/* \
-  && \
-  fc-cache -f
+    /var/tmp/*
+
+COPY ./apps/wyoa-bot/shim/fonts /app/fonts
+
+RUN \
+  mkdir -p /usr/share/fonts/truetype/google-fonts \
+  && install -m644 /app/fonts/*ttf /usr/share/fonts/truetype/google-fonts/ \
+  && fc-cache -f
 
 USER k8s
 
