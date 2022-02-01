@@ -64,7 +64,7 @@ COPY ./apps/ws-staging-bot/shim/fonts /app/fonts
 RUN \
   mkdir -p /usr/share/fonts/truetype/google-fonts \
   && install -m644 /app/fonts/*ttf /usr/share/fonts/truetype/google-fonts/ \
-  fc-cache -f
+  && fc-cache -f
 
 USER k8s
 
