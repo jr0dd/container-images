@@ -13,26 +13,51 @@ RUN \
   && \
   apt-get install -y \
     npm \
-    gnupg \
     git \
-    chromium-browser \
-    libxrandr2 \
-    libatk1.0-0 \
+    gnupg \
+    ca-certificates \
+    fonts-liberation \
+    libappindicator3-1 \
+    libasound2 \
     libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libc6 \
+    libcairo2 \
+    libcups2 \
+    libdbus-1-3 \
+    libexpat1 \
+    libfontconfig1 \
+    libgbm1 \
+    libgcc1 \
+    libglib2.0-0 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libstdc++6 \
+    libx11-6 \
     libx11-xcb1 \
-    libxcb-dri3-0 \
+    libxcb1 \
     libxcomposite1 \
     libxcursor1 \
     libxdamage1 \
-    libcups2 \
-    libdrm2 \
-    libgbm1 \
-    libgtk-3-0 \
-    libxtst6 \
-    libnss3 \
+    libxext6 \
+    libxfixes3 \
+    libxi6 \
+    libxrandr2 \
+    libxrender1 \
     libxss1 \
-    libasound2 \
-    wget
+    libxtst6 \
+    lsb-release \
+    wget \
+    xdg-utils
+
+RUN \
+    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable
 
 RUN \
   --mount=type=secret,id=github_token \
@@ -45,6 +70,11 @@ RUN \
   && git checkout v${VERSION} \
   && npm install \
   && \
+  wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+  && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+  && apt-get update \
+  && apt-get install -y google-chrome-stable \
+  && \
   apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && apt-get autoremove -y \
   && apt-get clean \
@@ -54,7 +84,6 @@ RUN \
   && update-ca-certificates \
   && \
   rm -rf \
-    Poppins* \
     /tmp/* \
     /var/lib/apt/lists/* \
     /var/cache/apt/* \
@@ -65,7 +94,7 @@ COPY ./apps/whalestream-bot/shim/fonts /app/fonts
 RUN \
   mkdir -p /usr/share/fonts/truetype/google-fonts \
   && install -m644 /app/fonts/*ttf /usr/share/fonts/truetype/google-fonts/ \
-  && fc-cache -f
+  && fc-cache -fv
 
 USER k8s
 

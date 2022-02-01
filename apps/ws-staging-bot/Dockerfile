@@ -54,12 +54,6 @@ RUN \
     xdg-utils
 
 RUN \
-    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
-    && apt-get update \
-    && apt-get install -y google-chrome-stable
-
-RUN \
   --mount=type=secret,id=github_token \
   export TOKEN=$(cat /run/secrets/github_token) \
   && curl -sL https://deb.nodesource.com/setup_17.x | bash - \
@@ -69,6 +63,11 @@ RUN \
   && git clone https://jr0dd:${TOKEN}@github.com/jr0dd/ws-staging-bot.git /app \
   && git checkout v${VERSION} \
   && npm install \
+  && \
+  wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+  && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+  && apt-get update \
+  && apt-get install -y google-chrome-stable \
   && \
   apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && apt-get autoremove -y \
@@ -89,7 +88,7 @@ COPY ./apps/ws-staging-bot/shim/fonts /app/fonts
 RUN \
   mkdir -p /usr/share/fonts/truetype/google-fonts \
   && install -m644 /app/fonts/*ttf /usr/share/fonts/truetype/google-fonts/ \
-  && fc-cache -f
+  && fc-cache -fv
 
 USER k8s
 
