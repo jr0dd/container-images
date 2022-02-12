@@ -12,7 +12,6 @@ ENV \
   DEBCONF_NONINTERACTIVE_SEEN=true \
   DEBIAN_FRONTEND="noninteractive" \
   APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn \
-  TINI_VERSION=0.19.0 \
   UMASK=0002
 
 RUN \
@@ -44,9 +43,11 @@ RUN \
     curl \
     jq \
     locales \
-    tini \
     tzdata \
     vim-tiny \
+  && \
+  wget https://github.com/Yelp/dumb-init/releases/download/v1.2.5/dumb-init_1.2.5_amd64.deb \
+  && dpkg -i dumb-init_*.deb \
   && \
   localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
   && \
@@ -77,7 +78,7 @@ USER k8s
 VOLUME [ "/config" ]
 
 COPY ./base/ubuntu/shim /shim
-ENTRYPOINT [ "/usr/bin/tini", "--" ]
+ENTRYPOINT [ "/usr/bin/dumb-init", "--" ]
 
 LABEL "maintainer"="j_r0dd <jr0dd@@users.noreply.github.com>"
 LABEL org.opencontainers.image.source https://github.com/jr0dd/container-images
