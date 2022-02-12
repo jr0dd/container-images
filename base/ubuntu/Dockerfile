@@ -46,8 +46,8 @@ RUN \
     tzdata \
     vim-tiny \
   && \
-  wget https://github.com/Yelp/dumb-init/releases/download/v1.2.5/dumb-init_1.2.5_amd64.deb \
-  && dpkg -i dumb-init_*.deb \
+  curl https://github.com/Yelp/dumb-init/releases/download/v1.2.5/dumb-init_1.2.5_amd64.deb -o /tmp/dumb-init.deb\
+  && dpkg -i /tmp/dumb-init.deb \
   && \
   localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
   && \
