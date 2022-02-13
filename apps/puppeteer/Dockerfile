@@ -15,6 +15,7 @@ RUN \
   && \
   apt-get install -y \
     fontconfig \
+    gconf-service \
     git \
     gnupg \
     libappindicator3-1 \
