@@ -74,6 +74,8 @@ RUN \
     fonts-indic \
     google-chrome-stable
 
+COPY ./apps/puppeteer/app.js /app
+
 RUN \
   curl -sL https://deb.nodesource.com/setup_17.x | bash - \
   && \
@@ -110,7 +112,6 @@ USER k8s
 EXPOSE 4000
 
 COPY ./apps/puppeteer/shim /shim
-COPY ./apps/puppeteer/app.js /app
 COPY ./apps/puppeteer/entrypoint.sh /entrypoint.sh
 
 CMD ["/entrypoint.sh"]
