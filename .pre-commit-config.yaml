@@ -1,11 +1,16 @@
-# See https://pre-commit.com for more information
+---
+fail_fast: false
 repos:
-- repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.0.1
-  hooks:
-  - id: trailing-whitespace
-  - id: end-of-file-fixer
-  - id: fix-byte-order-marker
-  - id: mixed-line-ending
-  - id: check-merge-conflict
-  - id: check-case-conflict
+  - repo: https://github.com/standard/standard
+    rev: v16.0.4
+    hooks:
+      - id: standard
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+    - id: trailing-whitespace
+    - id: end-of-file-fixer
+    - id: fix-byte-order-marker
+    - id: mixed-line-ending
+    - id: check-merge-conflict
+    - id: check-case-conflict

@@ -1,0 +1,36 @@
+{
+  "name": "puppeteer",
+  "version": "1.0.0",
+  "author": "j_r0dd",
+  "license": "MIT",
+  "description": "This is a standalone container for Puppeteer",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jr0dd/container-images.git"
+  },
+  "keywords": [
+    "puppeteer",
+    "web scraper",
+    "chrome",
+    "dev-tools"
+  ],
+  "devDependencies": {
+    "eslint": "8.9.0",
+    "standard": "*"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 2,
+    "semi": false,
+    "singleQuote": false,
+    "bracketSpacing": false,
+    "useTabs": false
+  },
+  "scripts": {
+    "lint": "standard"
+  },
+  "dependencies": {
+    "puppeteer": "^13.3.1"
+  }
+}

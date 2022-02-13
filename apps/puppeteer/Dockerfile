@@ -53,10 +53,8 @@ RUN \
     libxrender1 \
     libxss1 \
     libxtst6 \
-    lsb-release \
-    npm \
-    wget \
-    xdg-utils
+    xdg-utils \
+    xvfb
 
 RUN \
   curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
@@ -75,14 +73,13 @@ RUN \
     fonts-indic \
     google-chrome-stable
 
-COPY ./apps/puppeteer/app.js /app
+COPY ./apps/puppeteer/app /app
 
 RUN \
   curl -sL https://deb.nodesource.com/setup_17.x | bash - \
   && \
   apt-get install -y \
     nodejs \
-  && npm init -y \
   && npm install -g npm@latest \
   && npm install puppeteer@${VERSION} \
   && \
@@ -99,8 +96,6 @@ RUN \
     /var/lib/apt/lists/* \
     /var/cache/apt/* \
     /var/tmp/*
-
-COPY ./apps/puppeteer/fonts /app/fonts
 
 RUN \
   mkdir -p /usr/share/fonts/truetype/google-fonts \
