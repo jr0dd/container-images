@@ -8,6 +8,8 @@ USER root
 
 WORKDIR /app
 
+ENV NODE_ENV=production
+
 RUN \
   apt-get -qq update \
   && \

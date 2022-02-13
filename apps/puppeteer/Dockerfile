@@ -99,6 +99,8 @@ RUN \
 
 COPY ./apps/puppeteer/shim/fonts /app/fonts
 
+COPY ./apps/puppeteer/app.js /app
+
 RUN \
   mkdir -p /usr/share/fonts/truetype/google-fonts \
   && install -m644 /app/fonts/*ttf /usr/share/fonts/truetype/google-fonts/ \
