@@ -11,7 +11,7 @@ const puppeteer = require('puppeteer');
       '--disable-setuid-sandbox',
       '--no-sandbox',
       '--remote-debugging-port=4000',
-	  '--remote-debugging-address=0.0.0.0'
+	    '--remote-debugging-address=0.0.0.0'
     ]
   })
     .catch((error) => {

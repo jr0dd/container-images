@@ -97,13 +97,12 @@ RUN \
     /var/cache/apt/* \
     /var/tmp/*
 
-COPY ./apps/puppeteer/shim/fonts /app/fonts
-
-COPY ./apps/puppeteer/app.js /app
+COPY ./apps/puppeteer/fonts /app/fonts
 
 RUN \
   mkdir -p /usr/share/fonts/truetype/google-fonts \
   && install -m644 /app/fonts/*ttf /usr/share/fonts/truetype/google-fonts/ \
+  && rm -rf /app/fonts \
   && fc-cache -fv
 
 USER k8s
@@ -111,6 +110,7 @@ USER k8s
 EXPOSE 4000
 
 COPY ./apps/puppeteer/shim /shim
+COPY ./apps/puppeteer/app.js /app
 COPY ./apps/puppeteer/entrypoint.sh /entrypoint.sh
 
 CMD ["/entrypoint.sh"]
