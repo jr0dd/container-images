@@ -18,7 +18,6 @@ RUN \
     gconf-service \
     git \
     gnupg \
-    libappindicator3-1 \
     libasound2 \
     libatk-bridge2.0-0 \
     libatk1.0-0 \
@@ -28,11 +27,8 @@ RUN \
     libdbus-1-3 \
     libexpat1 \
     libfontconfig1 \
-    libgbm-dev \
     libgbm1 \
     libgcc1 \
-    libgconf-2-4 \
-    libgdk-pixbuf2.0-0 \
     libglib2.0-0 \
     libgtk-3-0 \
     libnspr4 \
@@ -53,24 +49,24 @@ RUN \
     libxrender1 \
     libxss1 \
     libxtst6 \
-    xdg-utils \
-    xvfb
+    xdg-utils
 
 RUN \
   curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
   && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
   && apt-get update \
   && apt-get install -y \
-    fonts-roboto \
-    fonts-ubuntu \
-    fonts-noto-color-emoji \
-    fonts-noto-cjk \
-    fonts-ipafont-gothic \
-    fonts-wqy-zenhei \
-    fonts-kacst \
     fonts-freefont-ttf \
-    fonts-thai-tlwg \
     fonts-indic \
+    fonts-ipafont-gothic \
+    fonts-kacst \
+    fonts-liberation \
+    fonts-noto-cjk \
+    fonts-noto-color-emoji \
+    fonts-roboto \
+    fonts-thai-tlwg \
+    fonts-ubuntu \
+    fonts-wqy-zenhei \
     google-chrome-stable
 
 COPY ./apps/puppeteer/app /app
