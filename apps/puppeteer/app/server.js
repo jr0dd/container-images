@@ -8,10 +8,10 @@ const puppeteer = require('puppeteer');
       // required docker flags
       '--disable-dev-shm-usage',
       '--disable-gpu',
-      // '--disable-setuid-sandbox',
+      '--disable-setuid-sandbox',
       '--disable-software-rasterizer',
-      // '--no-zygote',
-      // '--no-sandbox',
+      '--no-zygote',
+      '--no-sandbox',
       // cors handling
       '--disable-features=IsolateOrigins,site-per-process',
       '--disable-site-isolation-trials',
