@@ -17,6 +17,7 @@ RUN \
   && \
   apt-get install -y \
     fontconfig \
+    dbus \
     gconf-service \
     git \
     gnupg \
