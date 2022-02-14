@@ -1,5 +1,6 @@
 .DS_Store
 .ignore/
+node_modules/
 *.swp
 .idea/
 static/
