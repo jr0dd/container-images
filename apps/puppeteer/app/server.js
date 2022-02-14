@@ -9,6 +9,7 @@ const puppeteer = require('puppeteer');
       '--disable-dev-shm-usage',
       '--disable-gpu',
       '--disable-setuid-sandbox',
+      '--disable-software-rasterizer',
       '--no-sandbox',
       // cors handling
       '--disable-features=IsolateOrigins,site-per-process',
