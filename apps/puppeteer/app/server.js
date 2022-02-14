@@ -10,6 +10,7 @@ const puppeteer = require('puppeteer');
       '--disable-gpu',
       '--disable-setuid-sandbox',
       '--disable-software-rasterizer',
+      '--no-zygote',
       '--no-sandbox',
       // cors handling
       '--disable-features=IsolateOrigins,site-per-process',
