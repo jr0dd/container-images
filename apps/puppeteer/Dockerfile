@@ -10,8 +10,7 @@ WORKDIR /app
 
 ENV \
   NODE_ENV=production \
-  HOME=/config \
-  DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket
+  HOME=/config
 
 RUN \
   apt-get -qq update \
