@@ -71,7 +71,7 @@ RUN \
     fonts-wqy-zenhei \
     google-chrome-stable
 
-COPY ./apps/puppeteer/app /app
+COPY ./apps/puppeteer/node /app
 
 RUN \
   curl -sL https://deb.nodesource.com/setup_17.x | bash - \
