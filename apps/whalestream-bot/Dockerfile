@@ -23,7 +23,7 @@ RUN \
   && git clone https://jr0dd:${TOKEN}@github.com/jr0dd/whalestream-bot.git /app \
   && git checkout v${VERSION} \
   && npm install -g npm@latest \
-  && npm install \
+  && npm install --production \
   && \
   apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && apt-get autoremove -y \

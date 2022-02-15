@@ -79,6 +79,7 @@ RUN \
   apt-get install -y \
     nodejs \
   && npm install -g npm@latest \
+  && npm install --production \
   && npm install puppeteer@${VERSION} \
   && \
   apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
