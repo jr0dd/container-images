@@ -47,7 +47,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: hadolint
-        uses: reviewdog/action-hadolint@v1.30.0
+        uses: reviewdog/action-hadolint@v1.31.0
         with:
           github_token: ${{ secrets.PAT }}
           reporter: github-pr-review
