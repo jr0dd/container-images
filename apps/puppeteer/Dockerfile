@@ -59,16 +59,6 @@ RUN \
   && apt-get update \
   && apt-get install -y \
     fonts-freefont-ttf \
-    fonts-indic \
-    fonts-ipafont-gothic \
-    fonts-kacst \
-    fonts-liberation \
-    fonts-noto-cjk \
-    fonts-noto-color-emoji \
-    fonts-roboto \
-    fonts-thai-tlwg \
-    fonts-ubuntu \
-    fonts-wqy-zenhei \
     google-chrome-stable
 
 COPY ./apps/puppeteer/node /app
@@ -95,12 +85,6 @@ RUN \
     /var/lib/apt/lists/* \
     /var/cache/apt/* \
     /var/tmp/*
-
-RUN \
-  mkdir -p /usr/share/fonts/truetype/google-fonts \
-  && install -m644 /app/fonts/*ttf /usr/share/fonts/truetype/google-fonts/ \
-  && rm -rf /app/fonts \
-  && fc-cache -fv
 
 USER k8s
 
