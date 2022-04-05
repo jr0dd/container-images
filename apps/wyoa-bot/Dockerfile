@@ -25,7 +25,7 @@ RUN \
   && npm install -g npm@latest \
   && npm install --production \
   && \
-  curl -sL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops_${SOPS_VERSION}_amd64.deb -o sops.deb \
+  curl -sL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops_${SOPS_VERSION}_amd64.deb -o sops_${SOPS_VERSION}_amd64.deb \
   && dpkg -i sops_${SOPS_VERSION}_amd64.deb \
   && \
   apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
