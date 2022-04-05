@@ -1,4 +1,4 @@
-name: Fetch New Versions
+name: Schedule - Fetch New Versions
 
 on:
   workflow_dispatch:
@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.PAT }}
-          fetch-depth: 1  
+          fetch-depth: 1
       - name: Fetch new base versions
         run: |
           find ./base -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | while read app; do

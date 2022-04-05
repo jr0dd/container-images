@@ -4,11 +4,11 @@ ARG VERSION
 
 ARG TARGETPLATFORM
 
+ARG SOPS_VERSION=3.7.2
+
 USER root
 
 WORKDIR /app
-
-ENV NODE_ENV=production
 
 RUN \
   --mount=type=secret,id=github_token \
@@ -25,6 +25,9 @@ RUN \
   && npm install -g npm@latest \
   && npm install --production \
   && \
+  curl -sL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops_${SOPS_VERSION}_amd64.deb -o sops.deb \
+  && dpkg -i sops_${SOPS_VERSION}_amd64.deb \
+  && \
   apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && apt-get autoremove -y \
   && apt-get clean \
@@ -34,6 +37,7 @@ RUN \
   && update-ca-certificates \
   && \
   rm -rf \
+    /app/*deb \
     /tmp/* \
     /var/lib/apt/lists/* \
     /var/cache/apt/* \
