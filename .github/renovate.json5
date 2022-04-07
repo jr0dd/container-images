@@ -6,7 +6,8 @@
     ":dependencyDashboard",
     ":semanticCommits",
     ":separatePatchReleases",
-    ":enablePreCommit"
+    ":enablePreCommit",
+    "github>jr0dd/container-images//.github/renovate/autoMerge"
   ],
   "platform": "github",
   "username": "wyoa-bot[bot]",
