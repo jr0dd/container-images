@@ -3,7 +3,7 @@ name: Schedule - Fetch New Versions
 on:
   workflow_dispatch:
   schedule:
-    - cron: "*/2 * * * *"
+    - cron: "* */2 * * *"
 
 env:
   TOKEN: ${{ secrets.PAT }}
