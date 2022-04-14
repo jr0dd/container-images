@@ -20,6 +20,7 @@ RUN \
   apt-get install -y \
     git \
     nodejs \
+  && git config --global --add safe.directory /app \
   && git clone https://jr0dd:${TOKEN}@github.com/jr0dd/wyoa-bot.git /app \
   && git checkout v${VERSION} \
   && npm install -g npm@latest \
