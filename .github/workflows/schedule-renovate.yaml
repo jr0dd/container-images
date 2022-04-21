@@ -13,12 +13,13 @@ on: # yamllint disable-line rule:truthy
         default: "info"
         required: false
   schedule:
-    - cron: "* */2 * * *"
+    - cron: "0 */2 * * *"
   push:
     branches:
       - main
     paths:
       - ".github/renovate.json5"
+      - ".github/renovate/**.json"
 
 env:
   LOG_LEVEL: info
