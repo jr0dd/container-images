@@ -24,7 +24,7 @@ RUN \
   && git clone https://jr0dd:${TOKEN}@github.com/jr0dd/wyoa-bot.git /app \
   && git checkout v${VERSION} \
   && npm install -g npm@latest \
-  && npm install --production \
+  && npm install --omit=dev \
   && \
   curl -sL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops_${SOPS_VERSION}_amd64.deb -o sops_${SOPS_VERSION}_amd64.deb \
   && dpkg -i sops_${SOPS_VERSION}_amd64.deb \
