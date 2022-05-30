@@ -9,7 +9,6 @@ USER root
 WORKDIR /app
 
 ENV \
-  NODE_ENV=production \
   HOME=/config
 
 RUN \
@@ -64,12 +63,12 @@ RUN \
 COPY ./apps/puppeteer/node /app
 
 RUN \
-  curl -sL https://deb.nodesource.com/setup_17.x | bash - \
+  curl -sL https://deb.nodesource.com/setup_18.x | bash - \
   && \
   apt-get install -y \
     nodejs \
   && npm install -g npm@latest \
-  && npm install --production \
+  && npm install --omit=dev \
   && npm install puppeteer@${VERSION} \
   && \
   apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \

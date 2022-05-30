@@ -4,6 +4,7 @@ ARG VERSION
 
 ARG TARGETPLATFORM
 
+# renovate: datasource=github-releases depName=mozilla/sops
 ARG SOPS_VERSION=3.7.3
 
 USER root
@@ -15,7 +16,7 @@ RUN \
   export TOKEN=$(cat /run/secrets/github_token) \
   && apt-get -qq update \
   && \
-  curl -sL https://deb.nodesource.com/setup_17.x | bash - \
+  curl -sL https://deb.nodesource.com/setup_18.x | bash - \
   && \
   apt-get install -y \
     git \

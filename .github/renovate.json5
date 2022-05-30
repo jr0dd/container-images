@@ -19,5 +19,18 @@
   "dependencyDashboardTitle": "Renovate Dashboard 🤖",
   "suppressNotifications": [
     "prIgnoreNotification"
+  ],
+  "rebaseWhen": "conflicted",
+  "regexManagers": [
+    // regexManager to read and process GitHub Releases
+    {
+      "fileMatch": [
+        "Dockerfile$"
+      ],
+      "matchStrings": [
+        "datasource=(?<datasource>.*?) depName=(?<depName>.*?)\n.*: \"(?<currentValue>.*)\"\n"
+      ],
+      "datasourceTemplate": "github-releases"
+    }
   ]
 }
