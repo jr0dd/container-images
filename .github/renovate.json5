@@ -22,21 +22,20 @@
   rebaseWhen: "conflicted",
   packageRules: [
     {
-      description: "Auto merge Puppeteer npm",
+      description: "Auto merge Puppeteer packages",
       matchDatasources: ["npm"],
       automerge: true,
       automergeType: "branch",
       requiredStatusChecks: null,
-      matchPackageNames: ["puppeteer"]
+      matchPackagePatterns: ["puppeteer"]
     },
     {
       description: "Auto merge GitHub Actions",
-      matchDatasources: ["github-tags"],
+      matchManagers: ["github-actions"],
       automerge: true,
       automergeType: "branch",
       requiredStatusChecks: null,
-      matchUpdateTypes: ["minor", "patch"],
-      matchPackageNames: ["renovatebot/github-action"]
-    }
+      matchUpdateTypes: ["minor", "patch"]
+    },
   ]
 }
