@@ -20,7 +20,26 @@
   suppressNotifications: ["prIgnoreNotification"],
   commitBodyTable: true,
   rebaseWhen: "conflicted",
+  regexManagers: [
+    {
+      fileMatch: [
+        "(^|/|\\.)Dockerfile$",
+        "(^|/)Dockerfile[^/]*$"
+      ],
+      matchStrings: [
+        "datasource=(?<datasource>[a-z-]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[a-z-0-9]+?))?\\s(?:ENV|ARG) .+?_VERSION=\"?(?<currentValue>.+?)\"?\\s"
+      ]
+    }
+  ],
   packageRules: [
+    {
+      description: "Auto merge GitHub Actions",
+      matchManagers: ["github-actions"],
+      automerge: true,
+      automergeType: "branch",
+      requiredStatusChecks: null,
+      matchUpdateTypes: ["minor", "patch"]
+    },
     {
       description: "Auto merge Puppeteer packages",
       matchDatasources: ["npm"],
@@ -30,12 +49,12 @@
       matchPackagePatterns: ["puppeteer"]
     },
     {
-      description: "Auto merge GitHub Actions",
-      matchManagers: ["github-actions"],
+      description: "Auto merge SOPS package",
+      matchDatasources: ["github-release"],
       automerge: true,
       automergeType: "branch",
       requiredStatusChecks: null,
-      matchUpdateTypes: ["minor", "patch"]
-    },
+      matchPackageNames: ["mozilla/sops"]
+    }
   ]
 }
