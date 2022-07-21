@@ -32,6 +32,6 @@
     "lint": "standard"
   },
   "dependencies": {
-    "puppeteer": "15.4.1"
+    "puppeteer": "15.4.2"
   }
 }
