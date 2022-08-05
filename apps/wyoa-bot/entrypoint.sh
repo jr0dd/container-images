@@ -8,8 +8,6 @@ SOPS_AGE_KEY=${SOPS_AGE_KEY}
 NODE_ENV=${NODE_ENV}
 
 cd /app
-rm config/*local*
-
 for i in config/*.yaml; do
     sops -d -i $i
     mv $i ${i/.sops.yaml/.yaml}
