@@ -156,6 +156,8 @@ jobs:
         if: ${{ steps.prep.outputs.goss == 'true' }}
         env:
           GOSS_FILE: ./${{ steps.prep.outputs.category }}/${{ matrix.container }}/goss.yaml
+          NODE_ENV: staging
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: |
           if test -n ${{ matrix.container }} == "wyoa-bot"; then
             dgoss run -e SOPS_AGE_KEY="${{ secrets.SOPS_AGE_KEY }}" -e NODE_ENV="staging" \
