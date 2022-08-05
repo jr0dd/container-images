@@ -1,4 +1,5 @@
-const puppeteer = require('puppeteer');
+import puppeteer from 'puppeteer'
+import chalk from 'chalk'
 
 (async () => {
   const defaultArgs = [
@@ -23,6 +24,8 @@ const puppeteer = require('puppeteer');
     args: defaultArgs
   })
     .catch((err) => {
-      console.error(err)
+      console.error(chalk.redBright(err))
     })
+
+  console.log(chalk.magentaBright('<== Puppeteer server is running ==>'))
 })()

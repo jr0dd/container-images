@@ -1,10 +1,11 @@
 {
   "name": "puppeteer",
-  "version": "15.0.0",
+  "version": "16.0.0",
   "author": "j_r0dd",
   "license": "MIT",
   "description": "This is a standalone container for Puppeteer",
   "main": "server.js",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/jr0dd/container-images.git"
@@ -20,18 +21,11 @@
     "nodemon": "2.0.19",
     "standard": "*"
   },
-  "prettier": {
-    "trailingComma": "es5",
-    "tabWidth": 2,
-    "semi": false,
-    "singleQuote": false,
-    "bracketSpacing": false,
-    "useTabs": false
-  },
   "scripts": {
     "lint": "standard"
   },
   "dependencies": {
-    "puppeteer": "15.5.0"
+    "chalk": "^5.0.1",
+    "puppeteer": "16.0.0"
   }
 }
