@@ -174,3 +174,12 @@ jobs:
           cache-to: ${{ steps.prep.outputs.cache_to }}
           secrets: |
             "github_token=${{ secrets.PAT }}"
+
+      - name: Trigger renovate for home cluster
+        uses: convictional/trigger-workflow-and-wait@v1.6.3
+        with:
+          owner: jr0dd
+          repo: home-ops
+          github_token: ${{ secrets.PAT }}
+          workflow_file_name: schedule-renovate.yaml
+          ref: main
