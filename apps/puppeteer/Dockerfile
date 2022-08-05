@@ -67,7 +67,7 @@ RUN \
   && \
   apt-get install -y \
     nodejs \
-  && npm install -g npm@latest \
+  && npm install npm@latest \
   && npm install --omit=dev \
   && npm install puppeteer@${VERSION} \
   && \
