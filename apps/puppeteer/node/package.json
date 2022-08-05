@@ -17,7 +17,7 @@
     "dev-tools"
   ],
   "devDependencies": {
-    "eslint": "8.19.0",
+    "eslint": "8.21.0",
     "nodemon": "2.0.19",
     "standard": "*"
   },
