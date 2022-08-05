@@ -156,6 +156,8 @@ jobs:
         if: ${{ steps.prep.outputs.goss == 'true' }}
         env:
           GOSS_FILE: ./${{ steps.prep.outputs.category }}/${{ matrix.container }}/goss.yaml
+          NODE_ENV: staging
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: |
           dgoss run ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:test
       # Push if not a PR, otherwise just test the build process for all requested platforms

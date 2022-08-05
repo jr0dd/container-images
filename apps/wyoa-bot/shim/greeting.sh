@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 echo "
-Welcome to the WYOA container!
+Welcome to the Bot container!
 "
