@@ -9,9 +9,6 @@ SOPS_AGE_KEY=${SOPS_AGE_KEY}
 NODE_ENV=${NODE_ENV}
 
 rm /app/config/*local*
-for i in /app/config/*.yaml; do
-    sops -d -i $i
-    mv $i ${i/.sops.yaml/.yaml}
-done
+npm run decrypt
 
-exec node /app/index.js
+exec npm run start
