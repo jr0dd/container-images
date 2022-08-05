@@ -26,6 +26,8 @@ RUN \
   && git checkout v${VERSION} \
   && npm install npm@latest \
   && npm install --omit=dev --no-audit \
+  && rm config/*local* \
+  && rm handlers/puppeteer.js \
   && \
   curl -sL https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops_${SOPS_VERSION}_amd64.deb -o sops_${SOPS_VERSION}_amd64.deb \
   && dpkg -i sops_${SOPS_VERSION}_amd64.deb \
