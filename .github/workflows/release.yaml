@@ -15,7 +15,7 @@ on:
 
 env:
   # How long to sleep before running the tests (gives the application time to start)
-  GOSS_SLEEP: 30
+  GOSS_SLEEP: 60
 
 # Detect which folders in project-root (which contain the containers) contain changes
 jobs:
@@ -156,10 +156,13 @@ jobs:
         if: ${{ steps.prep.outputs.goss == 'true' }}
         env:
           GOSS_FILE: ./${{ steps.prep.outputs.category }}/${{ matrix.container }}/goss.yaml
-          NODE_ENV: staging
-          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: |
-          dgoss run ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:test
+          if test -n ${{ matrix.container }}; then
+            dgoss run -e SOPS_AGE_KEY="${{ secrets.SOPS_AGE_KEY }}" -e NODE_ENV="staging" \
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:test
+          else
+            dgoss run ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:test
+          fi
       # Push if not a PR, otherwise just test the build process for all requested platforms
       - name: Build and Push
         uses: docker/build-push-action@v3
