@@ -1,13 +1,6 @@
 {
   extends: [
     "config:base",
-    "docker:enableMajor",
-    ":disableRateLimiting",
-    ":dependencyDashboard",
-    ":semanticCommits",
-    ":enablePreCommit",
-    ":automergeDigest",
-    ":automergeBranchPush",
   ],
   platform: "github",
   username: "wyoa-bot[bot]",
@@ -33,20 +26,23 @@
   ],
   packageRules: [
     {
+      description: "Auto-merge Ubuntu base updates",
+      matchDatasources: ["docker"],
+      automerge: true,
+      automergeType: "branch",
+      requiredStatusChecks: null,
+      matchPackageNames: [
+        "ghcr.io/jr0dd/ubuntu-focal",
+        "ghcr.io/jr0dd/ubuntu-jammy"
+      ]
+    },
+    {
       description: "Auto merge GitHub Actions",
       matchManagers: ["github-actions"],
       automerge: true,
       automergeType: "branch",
       requiredStatusChecks: null,
       matchUpdateTypes: ["minor", "patch"]
-    },
-    {
-      description: "Auto merge Puppeteer packages",
-      matchDatasources: ["npm"],
-      automerge: true,
-      automergeType: "branch",
-      requiredStatusChecks: null,
-      matchPackagePatterns: ["puppeteer"]
     },
     {
       description: "Auto merge SOPS package",

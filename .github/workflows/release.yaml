@@ -40,6 +40,7 @@ jobs:
         run: |
           CONTAINERS=$(jq --raw-output '.changed_files | fromjson | .[] |= sub("(?<filepath>(?<first_directory>(?<root1>[/]?)[^/]+/)(?<second_directory>(?<root2>[/]?)[^/]+)(?<extra_paths>.+))"; "\(.second_directory)") | unique' changes.json)
           echo ::set-output name=containers::${CONTAINERS}
+
   hadolint:
     name: Run hadolint
     runs-on: ubuntu-latest
@@ -57,9 +58,6 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     needs:
       - hadolint
       - changes
@@ -75,6 +73,8 @@ jobs:
       - name: Prepare
         id: prep
         run: |
+          BUILD_DATE=$(date --rfc-3339=seconds --utc)
+          echo ::set-output name=build_date::${BUILD_DATE}
           if test -f "./apps/${{ matrix.container }}/Dockerfile"; then
             CATEGORY="apps"
           else
@@ -102,7 +102,7 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
         with:
-          platforms: amd64,arm64,arm
+          platforms: amd64,arm64
 
       - name: Login to GHCR
         uses: docker/login-action@v2
@@ -128,19 +128,23 @@ jobs:
           key: ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}
           restore-keys: |
             ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}
+
       # Install the GOSS testing framework
       - name: Set up goss/dgoss
         uses: e1himself/goss-installation-action@v1.0.4
         if: ${{ steps.prep.outputs.goss == 'true' }}
         with:
-          version: 'v0.3.16'
+          # renovate: datasource=github-releases depName=aelsabbahy/goss
+          version: v0.3.18
 
       # Creates a local build to run tests on
-      - name: Build and Load local test-container
+      - name: Build and Load Local Test Container
         if: ${{ steps.prep.outputs.goss == 'true' }}
         uses: docker/build-push-action@v3
         with:
           build-args: VERSION=${{ steps.prep.outputs.version }}
+          labels: |
+            org.opencontainers.image.created=${{ steps.prep.outputs.build_date }}
           context: .
           file: ./${{ steps.prep.outputs.category }}/${{ matrix.container }}/Dockerfile
           load: true
@@ -159,34 +163,29 @@ jobs:
           NODE_ENV: staging
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: |
-          if [[ ${{ matrix.container }} == "wyoa-bot" ]]; then
-            dgoss run -e SOPS_AGE_KEY="${{ secrets.SOPS_AGE_KEY }}" -e NODE_ENV="staging" \
+          if [[ ${{ matrix.container }} == wyoa-bot ]]; then
+            dgoss run -e SOPS_AGE_KEY=${{ secrets.SOPS_AGE_KEY }} -e NODE_ENV=staging \
             ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:test
           else
             dgoss run ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:test
           fi
+
       # Push if not a PR, otherwise just test the build process for all requested platforms
       - name: Build and Push
         uses: docker/build-push-action@v3
         with:
           build-args: VERSION=${{ steps.prep.outputs.version }}
+          labels: |
+            org.opencontainers.image.created=${{ steps.prep.outputs.build_date }}
           context: .
           platforms: ${{ steps.prep.outputs.platform }}
           file: ./${{ steps.prep.outputs.category }}/${{ matrix.container }}/Dockerfile
           push: ${{ steps.prep.outputs.push }}
           tags: |
             ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:latest
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:rolling
             ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:v${{ steps.prep.outputs.version }}
           cache-from: ${{ steps.prep.outputs.cache_from }}
           cache-to: ${{ steps.prep.outputs.cache_to }}
           secrets: |
             "github_token=${{ secrets.PAT }}"
-
-      - name: Trigger renovate for home cluster
-        uses: convictional/trigger-workflow-and-wait@v1.6.3
-        with:
-          owner: jr0dd
-          repo: home-ops
-          github_token: ${{ secrets.PAT }}
-          workflow_file_name: schedule-renovate.yaml
-          ref: main

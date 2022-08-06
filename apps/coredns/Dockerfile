@@ -45,5 +45,7 @@ EXPOSE 53 53/udp
 
 ENTRYPOINT ["/coredns", "-conf", "/config/Corefile"]
 
-LABEL "maintainer"="j_r0dd <jr0dd@@users.noreply.github.com>"
-LABEL org.opencontainers.image.source https://github.com/jr0dd/container-images
+LABEL \
+  org.opencontainers.image.title="CoreDNS" \
+  org.opencontainers.image.source="https://github.com/coredns/coredns" \
+  org.opencontainers.image.version="${VERSION}"

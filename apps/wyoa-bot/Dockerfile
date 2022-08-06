@@ -1,4 +1,4 @@
-FROM ghcr.io/jr0dd/ubuntu:latest
+FROM ghcr.io/jr0dd/ubuntu-jammy:rolling@sha256:517dad3f9910d8861969c4e6cca6856c67c7a8d24f2599bac421823d894e7591
 
 ARG VERSION
 
@@ -56,5 +56,7 @@ COPY ./apps/wyoa-bot/entrypoint.sh /entrypoint.sh
 
 CMD ["/entrypoint.sh"]
 
-LABEL "maintainer"="j_r0dd <jr0dd@@users.noreply.github.com>"
-LABEL org.opencontainers.image.source https://github.com/jr0dd/container-images
+LABEL \
+  org.opencontainers.image.title="WYOA Bot" \
+  org.opencontainers.image.source="https://github.com/jr0dd/wyoa-bot" \
+  org.opencontainers.image.version="${VERSION}"

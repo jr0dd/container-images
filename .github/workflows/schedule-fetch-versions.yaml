@@ -5,9 +5,6 @@ on:
   schedule:
     - cron: "0 */2 * * *"
 
-env:
-  TOKEN: ${{ secrets.PAT }}
-
 jobs:
   get-version:
     runs-on: ubuntu-latest
@@ -32,7 +29,7 @@ jobs:
           find ./apps -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | while read app; do
             if test -f "./apps/${app}/latest-version.sh"; then
               version=$(bash "./apps/${app}/latest-version.sh")
-              if ! [[ -z "${version}" || "${version}" == "null" || "${version}" =~ "beta" || "${version}" =~ "alpha" ]]; then
+              if [[ ! -z "${version}" || "${version}" != "null" ]]; then
                 echo "${version}" | tee "./apps/${app}/VERSION" > /dev/null
                 echo "${app} ${version}"
               fi

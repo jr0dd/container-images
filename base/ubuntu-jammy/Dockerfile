@@ -1,14 +1,20 @@
 ARG VERSION
 
-ARG TARGETPLATFORM
-
 FROM ubuntu:${VERSION}
+
+ARG VERSION
+ARG TARGETPLATFORM
+ENV TARGETPLATFORM=${TARGETPLATFORM:-linux/amd64}
+
+# renovate: datasource=github-releases depName=yelp/dumb-init
+ARG DUMBINIT_VERSION=1.2.5
 
 USER root
 
 # DEBIAN_FRONTEND: https://askubuntu.com/questions/972516/debian-frontend-environment-variable
 # APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE: http://stackoverflow.com/questions/48162574/ddg#4946262
 ENV \
+  VERSION="${VERSION}" \
   DEBCONF_NONINTERACTIVE_SEEN=true \
   DEBIAN_FRONTEND="noninteractive" \
   APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn \
@@ -41,12 +47,13 @@ RUN \
     bash \
     ca-certificates \
     curl \
+    dnsutils \
     jq \
     locales \
     tzdata \
     vim-tiny \
   && \
-  curl -sL https://github.com/Yelp/dumb-init/releases/download/v1.2.5/dumb-init_1.2.5_amd64.deb -o /tmp/dumb-init.deb\
+  curl -sL https://github.com/Yelp/dumb-init/releases/download/v${DUMBINIT_VERSION}/dumb-init_${DUMBINIT_VERSION}_amd64.deb -o /tmp/dumb-init.deb\
   && dpkg -i /tmp/dumb-init.deb \
   && \
   localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
@@ -65,7 +72,6 @@ RUN \
   && apt-get clean \
   && \
   rm -rf \
-    /tini.asc \
     /tmp/* \
     /var/lib/apt/lists/* \
     /var/cache/apt/* \
@@ -77,8 +83,10 @@ USER k8s
 
 VOLUME [ "/config" ]
 
-COPY ./base/ubuntu/shim /shim
+COPY ./base/ubuntu-jammy/shim /shim
 ENTRYPOINT [ "/usr/bin/dumb-init", "--" ]
 
-LABEL "maintainer"="j_r0dd <jr0dd@@users.noreply.github.com>"
-LABEL org.opencontainers.image.source https://github.com/jr0dd/container-images
+LABEL \
+  org.opencontainers.image.base.name="ghcr.io/jr0dd/ubuntu-jammy" \
+  org.opencontainers.image.base.version="${VERSION}" \
+  org.opencontainers.image.authors="j_r0dd <jr0dd@@users.noreply.github.com>"
