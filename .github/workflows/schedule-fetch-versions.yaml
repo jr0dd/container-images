@@ -5,6 +5,9 @@ on:
   schedule:
     - cron: "0 */2 * * *"
 
+env:
+   TOKEN: ${{ secrets.PAT }}
+
 jobs:
   get-version:
     runs-on: ubuntu-latest
