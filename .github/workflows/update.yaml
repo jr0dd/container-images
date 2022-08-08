@@ -1,19 +1,24 @@
-name: Fetch Updates
+name: Updates
 
 on:
   workflow_dispatch:
   schedule:
     - cron: "0 */2 * * *"
 
-env:
-  TOKEN: ${{ secrets.PAT }}
-
 jobs:
-  get-updates:
+  update:
+    name: Fetch updates
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Generate Token
+        uses: tibdex/github-app-token@v1
+        id: generate-token
+        with:
+          app_id: ${{ secrets.BOT_APP_ID }}
+          private_key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
 
       - name: Fetch new base versions
         id: fetch-base
@@ -35,7 +40,7 @@ jobs:
         run: |
           find ./apps -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | while read app; do
             if test -f "./apps/${app}/latest-version.sh"; then
-              version=$(bash "./apps/${app}/latest-version.sh")
+              version=$(export TOKEN="${{ steps.generate-token.outputs.token }}" && bash "./apps/${app}/latest-version.sh")
               if [[ ! -z "${version}" || "${version}" != "null" ]]; then
                 echo "${version}" | tee "./apps/${app}/VERSION" > /dev/null
                 echo "${app} ${version}"
@@ -44,7 +49,7 @@ jobs:
           done
 
       - name: Update versions file
-        id: versions
+        id: update-versions
         shell: bash
         run: |
           if [[ -n $(git status --porcelain) ]]; then
