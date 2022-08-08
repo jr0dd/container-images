@@ -132,8 +132,8 @@ jobs:
         if: github.event_name != 'pull_request'
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.PAT }}
+          username: ${{ github.repository_owner }}
+          password: ${{ steps.generate-token.outputs.token }}
 
       - name: Set up Docker Buildx
         id: buildx
