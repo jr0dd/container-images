@@ -1,6 +1,7 @@
 FROM ghcr.io/jr0dd/ubuntu-jammy:rolling@sha256:38c744dde4190707683af7f2af797fe7bf7b452e6eab972e6c70726d4c2f4700
 
 ARG VERSION
+ARG TOKEN
 
 ARG TARGETPLATFORM
 

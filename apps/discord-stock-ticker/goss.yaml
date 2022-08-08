@@ -2,7 +2,7 @@
 process:
   ticker:
     running: true
-    
+
 http:
   http://localhost:8080/ticker:
     status: 200
