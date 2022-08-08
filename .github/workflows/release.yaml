@@ -22,6 +22,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - uses: dorny/paths-filter@v2
         id: filter
         with:
@@ -30,20 +31,36 @@ jobs:
             changed:
               - 'apps/**'
               - 'base/**'
+
       - run: echo '${{ toJson(steps.filter.outputs) }}' > changes.json
       - id: reduce
         run: |
           CONTAINERS=$(jq --raw-output '.changed_files | fromjson | .[] |= sub("(?<filepath>(?<first_directory>(?<root1>[/]?)[^/]+/)(?<second_directory>(?<root2>[/]?)[^/]+)(?<extra_paths>.+))"; "\(.second_directory)") | unique' changes.json)
           echo ::set-output name=containers::${CONTAINERS}
 
+  hadolint:
+    name: Run hadolint
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+  
+      - name: hadolint
+        uses: reviewdog/action-hadolint@v1.33.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          filter_mode: diff_context
+          fail_on_error: true
+
   build-and-test:
     name: Build and test
     runs-on: ubuntu-22.04
     needs:
+      - get-changes
       - hadolint
-      - changes
     strategy:
-      matrix: ${{ fromJson(needs.changes.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.get-changes.outputs.matrix) }}
       fail-fast: false
     if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     steps:
@@ -84,7 +101,7 @@ jobs:
 
       - name: Set up Goss
         uses: e1himself/goss-installation-action@v1.0.4
-        if: ${{ steps.prep.outputs.goss == 'true' }}
+        if: ${{ steps.vars.outputs.goss == 'true' }}
         with:
           # renovate: datasource=github-releases depName=aelsabbahy/goss
           version: v0.3.18
@@ -109,30 +126,30 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Load Local Test Container
-        if: ${{ steps.prep.outputs.goss == 'true' }}
+        if: ${{ steps.vars.outputs.goss == 'true' }}
         uses: docker/build-push-action@v3
         with:
-          build-args: VERSION=${{ steps.prep.outputs.version }}
+          build-args: VERSION=${{ steps.vars.outputs.version }}
           labels: |
-            org.opencontainers.image.created=${{ steps.prep.outputs.build_date }}
+            org.opencontainers.image.created=${{ steps.vars.outputs.build_date }}
           context: .
-          file: ./${{ steps.prep.outputs.category }}/${{ matrix.container }}/Dockerfile
+          file: ./${{ steps.vars.outputs.category }}/${{ matrix.container }}/Dockerfile
           load: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:test
-          cache-from: ${{ steps.prep.outputs.cache_from }}
-          cache-to: ${{ steps.prep.outputs.cache_to }}
+          cache-from: ${{ steps.vars.outputs.cache_from }}
+          cache-to: ${{ steps.vars.outputs.cache_to }}
           secrets: |
-            "github_token=${{ secrets.GITHUB_TOKEN }}"
+            "github_token=${{ secrets.PAT }}"
 
       - name: Run GOSS tests
         id: goss
-        if: ${{ steps.prep.outputs.goss == 'true' }}
+        if: ${{ steps.vars.outputs.goss == 'true' }}
         shell: bash
         env:
           NODE_ENV: staging
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
-          GOSS_FILE: ./${{ steps.prep.outputs.category }}/${{ matrix.container }}/goss.yaml
+          GOSS_FILE: ./${{ steps.vars.outputs.category }}/${{ matrix.container }}/goss.yaml
           GOSS_OPTS: |-
             --retry-timeout 60s --sleep 2s --color --format documentation
         run: |
@@ -147,18 +164,18 @@ jobs:
         id: release
         uses: docker/build-push-action@v3
         with:
-          build-args: VERSION=${{ steps.prep.outputs.version }}
+          build-args: VERSION=${{ steps.vars.outputs.version }}
           labels: |
-            org.opencontainers.image.created=${{ steps.prep.outputs.build_date }}
+            org.opencontainers.image.created=${{ steps.vars.outputs.build_date }}
           context: .
-          platforms: ${{ steps.prep.outputs.platform }}
-          file: ./${{ steps.prep.outputs.category }}/${{ matrix.container }}/Dockerfile
-          push: ${{ steps.prep.outputs.push }}
+          platforms: ${{ steps.vars.outputs.platform }}
+          file: ./${{ steps.vars.outputs.category }}/${{ matrix.container }}/Dockerfile
+          push: ${{ steps.vars.outputs.push }}
           tags: |
             ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:latest
             ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:rolling
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:v${{ steps.prep.outputs.version }}
-          cache-from: ${{ steps.prep.outputs.cache_from }}
-          cache-to: ${{ steps.prep.outputs.cache_to }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:v${{ steps.vars.outputs.version }}
+          cache-from: ${{ steps.vars.outputs.cache_from }}
+          cache-to: ${{ steps.vars.outputs.cache_to }}
           secrets: |
-            "github_token=${{ secrets.PAT }}"
+            "github_token=${{ secrets.GITHUB_TOKEN }}"
