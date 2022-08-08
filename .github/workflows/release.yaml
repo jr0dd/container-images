@@ -150,6 +150,8 @@ jobs:
       - name: Build and Load Local Test Container
         if: ${{ steps.vars.outputs.goss == 'true' }}
         uses: docker/build-push-action@v3
+        env:
+          GIT_AUTH_TOKEN: ${{ steps.generate-token.outputs.token }}
         with:
           build-args: VERSION=${{ steps.vars.outputs.version }}
           labels: |
@@ -163,7 +165,6 @@ jobs:
           cache-to: ${{ steps.vars.outputs.cache_to }}
           secrets: |
             github_token=${{ steps.generate-token.outputs.token }}
-            GIT_AUTH_TOKEN=${{ steps.generate-token.outputs.token }}
 
       - name: Run GOSS tests
         id: goss
@@ -186,6 +187,8 @@ jobs:
       - name: Build and Push
         id: release
         uses: docker/build-push-action@v3
+        env:
+          GIT_AUTH_TOKEN: ${{ steps.generate-token.outputs.token }}
         with:
           build-args: VERSION=${{ steps.vars.outputs.version }}
           labels: |
@@ -202,4 +205,3 @@ jobs:
           cache-to: ${{ steps.vars.outputs.cache_to }}
           secrets: |
             github_token=${{ steps.generate-token.outputs.token }}
-            GIT_AUTH_TOKEN=${{ steps.generate-token.outputs.token }}
