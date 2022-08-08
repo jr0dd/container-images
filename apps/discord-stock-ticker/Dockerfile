@@ -68,3 +68,5 @@ LABEL \
   org.opencontainers.image.title="discord-stock-ticker" \
   org.opencontainers.image.source="https://github.com/rssnyder/discord-stock-ticker" \
   org.opencontainers.image.version="${VERSION}"
+
+RUN unset VERSION

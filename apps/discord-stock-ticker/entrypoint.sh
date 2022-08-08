@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -u
 
 source "/shim/umask.sh"
 source "/shim/vpn.sh"
