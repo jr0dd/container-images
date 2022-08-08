@@ -23,7 +23,7 @@ RUN \
   && git checkout v${VERSION} \
   && go build -o /bin/ticker
 
-FROM ghcr.io/jr0dd/ubuntu-jammy:rolling@sha256:517dad3f9910d8861969c4e6cca6856c67c7a8d24f2599bac421823d894e7591
+FROM ghcr.io/jr0dd/ubuntu-jammy:rolling@sha256:38c744dde4190707683af7f2af797fe7bf7b452e6eab972e6c70726d4c2f4700
 
 ARG VERSION
 
@@ -68,5 +68,3 @@ LABEL \
   org.opencontainers.image.title="discord-stock-ticker" \
   org.opencontainers.image.source="https://github.com/rssnyder/discord-stock-ticker" \
   org.opencontainers.image.version="${VERSION}"
-
-RUN unset VERSION
