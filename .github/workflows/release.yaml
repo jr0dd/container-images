@@ -23,6 +23,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Generate Token
+        uses: tibdex/github-app-token@v1
+        id: generate-token
+        with:
+          app_id: ${{ secrets.BOT_APP_ID }}
+          private_key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+
       - uses: dorny/paths-filter@v2
         id: filter
         with:
@@ -44,11 +51,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-  
+
       - name: hadolint
         uses: reviewdog/action-hadolint@v1.33.0
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ steps.generate-token.outputs.token }}
           reporter: github-pr-review
           filter_mode: diff_context
           fail_on_error: true
@@ -123,7 +130,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ steps.generate-token.outputs.token }}
 
       - name: Build and Load Local Test Container
         if: ${{ steps.vars.outputs.goss == 'true' }}
@@ -140,7 +147,7 @@ jobs:
           cache-from: ${{ steps.vars.outputs.cache_from }}
           cache-to: ${{ steps.vars.outputs.cache_to }}
           secrets: |
-            "github_token=${{ secrets.PAT }}"
+            "github_token=${{ steps.generate-token.outputs.token }}"
 
       - name: Run GOSS tests
         id: goss
@@ -178,4 +185,4 @@ jobs:
           cache-from: ${{ steps.vars.outputs.cache_from }}
           cache-to: ${{ steps.vars.outputs.cache_to }}
           secrets: |
-            "github_token=${{ secrets.GITHUB_TOKEN }}"
+            "github_token=${{ steps.generate-token.outputs.token }}"
