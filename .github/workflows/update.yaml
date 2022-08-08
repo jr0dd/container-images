@@ -1,4 +1,4 @@
-name: Fetch New Versions
+name: Fetch Updates
 
 on:
   workflow_dispatch:
