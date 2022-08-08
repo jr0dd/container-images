@@ -13,15 +13,10 @@ on:
       - 'apps/**'
       - 'base/**'
 
-env:
-  # How long to sleep before running the tests (gives the application time to start)
-  GOSS_SLEEP: 30
-
-# Detect which folders in project-root (which contain the containers) contain changes
 jobs:
-  changes:
+  get-changes:
     name: Get changes
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       matrix: "{\"container\": ${{ steps.reduce.outputs.containers }} }"
     steps:
@@ -41,23 +36,9 @@ jobs:
           CONTAINERS=$(jq --raw-output '.changed_files | fromjson | .[] |= sub("(?<filepath>(?<first_directory>(?<root1>[/]?)[^/]+/)(?<second_directory>(?<root2>[/]?)[^/]+)(?<extra_paths>.+))"; "\(.second_directory)") | unique' changes.json)
           echo ::set-output name=containers::${CONTAINERS}
 
-  hadolint:
-    name: Run hadolint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: hadolint
-        uses: reviewdog/action-hadolint@v1.33.0
-        with:
-          github_token: ${{ secrets.PAT }}
-          reporter: github-pr-review
-          filter_mode: diff_context
-          fail_on_error: true
-
-  build:
-    name: Build
-    runs-on: ubuntu-latest
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-22.04
     needs:
       - hadolint
       - changes
@@ -66,12 +47,13 @@ jobs:
       fail-fast: false
     if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
 
-    # Define if tests and push should be run against which versions/platforms
-      - name: Prepare
-        id: prep
+      - name: Setup workflow Variables
+        id: vars
+        shell: bash
         run: |
           BUILD_DATE=$(date --rfc-3339=seconds --utc)
           echo ::set-output name=build_date::${BUILD_DATE}
@@ -99,20 +81,17 @@ jobs:
             echo ::set-output name=cache_from::"type=local,src=/tmp/.buildx-cache"
             echo ::set-output name=cache_to::"type=local,dest=/tmp/.buildx-cache,mode=max"
           fi
+
+      - name: Set up Goss
+        uses: e1himself/goss-installation-action@v1.0.4
+        if: ${{ steps.prep.outputs.goss == 'true' }}
+        with:
+          # renovate: datasource=github-releases depName=aelsabbahy/goss
+          version: v0.3.18
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
-        with:
-          platforms: amd64,arm64
 
-      - name: Login to GHCR
-        uses: docker/login-action@v2
-        if: github.event_name != 'pull_request'
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.PAT }}
-
-      # Install and configure Buildx
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v2
@@ -121,23 +100,14 @@ jobs:
           version: latest
           driver-opts: image=moby/buildkit:latest
 
-      - name: Cache Docker layers
-        uses: actions/cache@v3
+      - name: Login to GHCR
+        uses: docker/login-action@v2
+        if: github.event_name != 'pull_request'
         with:
-          path: /tmp/.buildx-cache
-          key: ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}
-          restore-keys: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Install the GOSS testing framework
-      - name: Set up goss/dgoss
-        uses: e1himself/goss-installation-action@v1.0.4
-        if: ${{ steps.prep.outputs.goss == 'true' }}
-        with:
-          # renovate: datasource=github-releases depName=aelsabbahy/goss
-          version: v0.3.18
-
-      # Creates a local build to run tests on
       - name: Build and Load Local Test Container
         if: ${{ steps.prep.outputs.goss == 'true' }}
         uses: docker/build-push-action@v3
@@ -153,15 +123,18 @@ jobs:
           cache-from: ${{ steps.prep.outputs.cache_from }}
           cache-to: ${{ steps.prep.outputs.cache_to }}
           secrets: |
-            "github_token=${{ secrets.PAT }}"
+            "github_token=${{ secrets.GITHUB_TOKEN }}"
 
-      # Run GOSS tests if included with the container
       - name: Run GOSS tests
+        id: goss
         if: ${{ steps.prep.outputs.goss == 'true' }}
+        shell: bash
         env:
-          GOSS_FILE: ./${{ steps.prep.outputs.category }}/${{ matrix.container }}/goss.yaml
           NODE_ENV: staging
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+          GOSS_FILE: ./${{ steps.prep.outputs.category }}/${{ matrix.container }}/goss.yaml
+          GOSS_OPTS: |-
+            --retry-timeout 60s --sleep 2s --color --format documentation
         run: |
           if [[ ${{ matrix.container }} == wyoa-bot ]]; then
             dgoss run -e SOPS_AGE_KEY=${{ secrets.SOPS_AGE_KEY }} -e NODE_ENV=staging \
@@ -170,8 +143,8 @@ jobs:
             dgoss run ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:test
           fi
 
-      # Push if not a PR, otherwise just test the build process for all requested platforms
       - name: Build and Push
+        id: release
         uses: docker/build-push-action@v3
         with:
           build-args: VERSION=${{ steps.prep.outputs.version }}

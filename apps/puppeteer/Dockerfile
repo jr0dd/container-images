@@ -68,8 +68,9 @@ RUN \
   apt-get install -y \
     nodejs \
   && npm install npm@latest \
-  && npm install --omit=dev --no-audit \
-  && npm install puppeteer@${VERSION} \
+  && npm install \
+    puppeteer@${VERSION} \
+    chalk@latest \
   && \
   apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && apt-get autoremove -y \
