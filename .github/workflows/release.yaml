@@ -21,17 +21,25 @@ jobs:
     name: Create token
     runs-on: ubuntu-22.04
     outputs:
-      token: ${{ steps.generate_token.outputs.token }}
+      token: ${{ steps.mask.outputs.token }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
       - name: Generate Token
         uses: tibdex/github-app-token@v1
-        id: generate_token
+        id: generate
         with:
           app_id: ${{ secrets.BOT_APP_ID }}
           private_key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+
+      - name: Mask token
+        id: mask
+        shell: bash
+        run: |
+          token=${{ steps.generate.outputs.token }}
+          echo "::add-mask::${token}"
+          echo "::set-output name=token::${token}"
 
   changes:
     name: Get changes
@@ -58,8 +66,8 @@ jobs:
       - id: reduce
         if: steps.filter.outputs.changed == 'true'
         run: |
-          CONTAINERS=$(jq --raw-output '.changed_files | fromjson | .[] |= sub("(?<filepath>(?<first_directory>(?<root1>[/]?)[^/]+/)(?<second_directory>(?<root2>[/]?)[^/]+)(?<extra_paths>.+))"; "\(.second_directory)") | unique' changes.json)
-          echo ::set-output name=containers::${CONTAINERS}
+          containers=$(jq --raw-output '.changed_files | fromjson | .[] |= sub("(?<filepath>(?<first_directory>(?<root1>[/]?)[^/]+/)(?<second_directory>(?<root2>[/]?)[^/]+)(?<extra_paths>.+))"; "\(.second_directory)") | unique' changes.json)
+          echo "::set-output name=containers::${containers}"
 
   lint:
     name: Run hadolint
@@ -106,9 +114,9 @@ jobs:
             category=base
           fi
           echo "::set-output name=category::${category}"
-          version=$(cat "./${category}/${{ matrix.container }}/VERSION")
+          version=$(cat ./${category}/${{ matrix.container }}/VERSION)
           echo "::set-output name=version::${version}"
-          platform=$(cat "./${category}/${{ matrix.container }}/PLATFORM")
+          platform=$(cat ./${category}/${{ matrix.container }}/PLATFORM)
           echo "::set-output name=platform::${platform}"
           if [[ -f "./${category}/${{ matrix.container }}/goss.yaml" ]]; then
             echo "::set-output name=goss_enabled::true"
