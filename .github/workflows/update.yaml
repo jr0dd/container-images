@@ -25,11 +25,11 @@ jobs:
         shell: bash
         run: |
           find ./base -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | while read -r app; do
-            if [[ -f "./base/${app}/latest-version.sh" ]]; then
-              version=$(bash "./base/${app}/latest-version.sh")
-              if [[ -n "${version}" || "${version}" != null ]]; then
-                echo "${version}" | tee "./base/${app}/VERSION" > /dev/null
-                echo "${app} ${version}"
+            if [[ -f "./base/$app/latest-version.sh" ]]; then
+              version=$(bash "./base/$app/latest-version.sh")
+              if [[ -n "$version" || "$version" != null ]]; then
+                echo "$version" | tee "./base/$app/VERSION" > /dev/null
+                echo "$app $version"
               fi
             fi
           done
@@ -39,11 +39,11 @@ jobs:
         shell: bash
         run: |
           find ./apps -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | while read -r app; do
-            if [[ -f "./apps/${app}/latest-version.sh" ]]; then
-              version=$(export TOKEN=${{ steps.generate-token.outputs.token }} && bash "./apps/${app}/latest-version.sh")
-              if [[ -n "${version}" || "${version}" != null ]]; then
-                echo "${version}" | tee "./apps/${app}/VERSION" > /dev/null
-                echo "${app} ${version}"
+            if [[ -f "./apps/$app/latest-version.sh" ]]; then
+              version=$(export TOKEN=${{ steps.generate-token.outputs.token }} && bash "./apps/$app/latest-version.sh")
+              if [[ -n "$version" || "$version" != null ]]; then
+                echo "$version" | tee "./apps/$app/VERSION" > /dev/null
+                echo "$app $version"
               fi
             fi
           done
