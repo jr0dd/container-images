@@ -99,27 +99,27 @@ jobs:
         shell: bash
         run: |
           build_date=$(date --rfc-3339=seconds --utc)
-          echo ::set-output name=build_date::"${build_date}"
+          echo "::set-output name=build_date::${build_date}"
           if [[ -f "./apps/${{ matrix.container }}/Dockerfile" ]]; then
             category=apps
           else
             category=base
           fi
-          echo ::set-output name=category::"${category}"
-          VERSION=$(cat "./${category}/${{ matrix.container }}/VERSION")
-          echo ::set-output name=version::"${VERSION}"
-          PLATFORM=$(cat "./${category}/${{ matrix.container }}/PLATFORM")
-          echo ::set-output name=platform::"${PLATFORM}"
+          echo "::set-output name=category::${category}"
+          version=$(cat "./${category}/${{ matrix.container }}/VERSION")
+          echo "::set-output name=version::${version}"
+          platform=$(cat "./${category}/${{ matrix.container }}/PLATFORM")
+          echo "::set-output name=platform::${platform}"
           if [[ -f "./${category}/${{ matrix.container }}/goss.yaml" ]]; then
-            echo ::set-output name=goss_enabled::true
-            echo ::set-output name=goss_config::"./${category}/${{ matrix.container }}/goss.yaml"
+            echo "::set-output name=goss_enabled::true"
+            echo "::set-output name=goss_config::./${category}/${{ matrix.container }}/goss.yaml"
           else
-            echo ::set-output name=goss_enabled::false
+            echo "::set-output name=goss_enabled::false"
           fi
           if [[ ${{ github.event_name }} == pull_request ]]; then
-            echo ::set-output name=push::false
+            echo "::set-output name=push::false"
           else
-            echo ::set-output name=push::true
+            echo "::set-output name=push::true"
           fi
 
       - name: Set up Goss
@@ -156,7 +156,7 @@ jobs:
             VERSION=${{ steps.vars.outputs.version }}
           context: .
           file: ${{ steps.vars.outputs.category }}/${{ matrix.container }}/Dockerfile
-          load: true
+          platforms: linux/amd64
           tags: |
             ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:test
           cache-from: type=gha
