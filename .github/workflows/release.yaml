@@ -36,10 +36,10 @@ jobs:
                 - 'apps/**'
                 - 'base/**'
 
-      - if: ${{ steps.filter.outputs.changed == 'true' }}
+      - if: steps.filter.outputs.changed == 'true'
         run: echo '${{ toJson(steps.filter.outputs) }}' > changes.json
       - id: reduce
-        if: ${{ steps.filter.outputs.changed == 'true' }}
+        if: steps.filter.outputs.changed == 'true'
         run: |
           CONTAINERS=$(jq --raw-output '.changed_files | fromjson | .[] |= sub("(?<filepath>(?<first_directory>(?<root1>[/]?)[^/]+/)(?<second_directory>(?<root2>[/]?)[^/]+)(?<extra_paths>.+))"; "\(.second_directory)") | unique' changes.json)
           echo ::set-output name=containers::${CONTAINERS}
@@ -119,7 +119,7 @@ jobs:
 
       - name: Set up Goss
         uses: e1himself/goss-installation-action@v1.0.4
-        if: ${{ steps.vars.outputs.goss_enabled == 'true' }}
+        if: steps.vars.outputs.goss_enabled == 'true'
         with:
           # renovate: datasource=github-releases depName=aelsabbahy/goss
           version: v0.3.18
@@ -129,7 +129,7 @@ jobs:
 
       - name: Login to GHCR
         uses: docker/login-action@v2
-        if: ${{ github.event_name != 'pull_request' }}
+        if: github.event_name != 'pull_request'
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -144,7 +144,7 @@ jobs:
           driver-opts: image=moby/buildkit:latest
 
       - name: Build and Load Local Test Container
-        if: ${{ steps.vars.outputs.goss_enabled == 'true' }}
+        if: steps.vars.outputs.goss_enabled == 'true'
         uses: docker/build-push-action@v3
         with:
           build-args: |
@@ -161,7 +161,7 @@ jobs:
 
       - name: Run GOSS tests
         id: goss
-        if: ${{ steps.vars.outputs.goss_enabled == 'true' }}
+        if: steps.vars.outputs.goss_enabled == 'true'
         shell: bash
         env:
           CONTAINER_RUNTIME: docker
