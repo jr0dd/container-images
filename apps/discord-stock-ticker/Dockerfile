@@ -23,7 +23,7 @@ RUN \
   && git checkout v${VERSION} \
   && go build -o /bin/ticker
 
-FROM ghcr.io/jr0dd/ubuntu-jammy:rolling@sha256:c120d9728fa5076700f36443f2a83d5603f32e60bbb19df7c38a942f8fe04214
+FROM ghcr.io/jr0dd/ubuntu-jammy:rolling@sha256:57adbfee0820644114695f992dabb9a3f61eba2b7bee408be056d60fcf334f69
 
 ARG VERSION
 
