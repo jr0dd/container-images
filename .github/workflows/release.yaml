@@ -2,7 +2,7 @@ name: Release
 
 on:
   workflow_run:
-    workflows: ['Updates']
+    workflows: ['Update']
     types:
       - completed
   push:
@@ -61,13 +61,11 @@ jobs:
                 - 'apps/**'
                 - 'base/**'
 
-      - if: steps.filter.outputs.changed == 'true'
-        run: echo '${{ toJson(steps.filter.outputs) }}' > changes.json
+      - run: echo '${{ toJson(steps.filter.outputs) }}' > changes.json
       - id: reduce
-        if: steps.filter.outputs.changed == 'true'
         run: |
           containers=$(jq --raw-output '.changed_files | fromjson | .[] |= sub("(?<filepath>(?<first_directory>(?<root1>[/]?)[^/]+/)(?<second_directory>(?<root2>[/]?)[^/]+)(?<extra_paths>.+))"; "\(.second_directory)") | unique' changes.json)
-          echo "::set-output name=containers::${containers}"
+          echo ::set-output name=containers::${containers}
 
   lint:
     name: Run hadolint
@@ -94,7 +92,6 @@ jobs:
       - token
       - changes
       - lint
-    if: needs.changes.outputs.matrix.containers != '[]'
     strategy:
       matrix: ${{ fromJson(needs.changes.outputs.matrix) }}
       fail-fast: false
@@ -145,7 +142,7 @@ jobs:
         if: github.event_name != 'pull_request'
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
+          username: ${{ github.repository_owner }}
           password: ${{ needs.token.outputs.token }}
 
       - name: Set up Docker Buildx
