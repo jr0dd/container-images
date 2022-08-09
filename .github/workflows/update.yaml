@@ -1,4 +1,4 @@
-name: Updates
+name: Update
 
 on:
   workflow_dispatch:
@@ -24,10 +24,10 @@ jobs:
         id: fetch-base
         shell: bash
         run: |
-          find ./base -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | while read app; do
-            if test -f "./base/${app}/latest-version.sh"; then
+          find ./base -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | while read -r app; do
+            if [[ -f "./base/${app}/latest-version.sh" ]]; then
               version=$(bash "./base/${app}/latest-version.sh")
-              if [[ ! -z "${version}" || "${version}" != "null" ]]; then
+              if [[ -n "${version}" || "${version}" != null ]]; then
                 echo "${version}" | tee "./base/${app}/VERSION" > /dev/null
                 echo "${app} ${version}"
               fi
@@ -38,10 +38,10 @@ jobs:
         id: fetch-apps
         shell: bash
         run: |
-          find ./apps -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | while read app; do
-            if test -f "./apps/${app}/latest-version.sh"; then
-              version=$(export TOKEN="${{ steps.generate-token.outputs.token }}" && bash "./apps/${app}/latest-version.sh")
-              if [[ ! -z "${version}" || "${version}" != "null" ]]; then
+          find ./apps -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | while read -r app; do
+            if [[ -f "./apps/${app}/latest-version.sh" ]]; then
+              version=$(export TOKEN=${{ steps.generate-token.outputs.token }} && bash "./apps/${app}/latest-version.sh")
+              if [[ -n "${version}" || "${version}" != null ]]; then
                 echo "${version}" | tee "./apps/${app}/VERSION" > /dev/null
                 echo "${app} ${version}"
               fi
@@ -53,9 +53,9 @@ jobs:
         shell: bash
         run: |
           if [[ -n $(git status --porcelain) ]]; then
-            git config user.name "${{ github.actor }}"
-            git config user.email "${{ github.actor }}@users.noreply.github.com"
+            git config user.name ${{ github.actor }}
+            git config user.email ${{ github.actor }}@users.noreply.github.com
             git add -A
-            git commit -sam "chore: add new release versions" || exit 0
+            git commit -sam 'chore: add new release versions' || exit 0
             git push
           fi

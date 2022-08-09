@@ -9,8 +9,8 @@ NODE_ENV=${NODE_ENV}
 
 cd /app
 for i in config/*.yaml; do
-    sops -d -i $i
-    mv $i ${i/.sops.yaml/.yaml}
+    sops -d -i "$i"
+    mv "$i" "${i/.sops.yaml/.yaml}"
 done
 
 exec node --loader esm-module-alias/loader --no-warnings ./index.js

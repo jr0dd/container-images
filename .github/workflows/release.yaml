@@ -17,6 +17,22 @@ on:
       - 'base/**'
 
 jobs:
+  token:
+    name: Create token
+    runs-on: ubuntu-22.04
+    outputs:
+      token: ${{ steps.generate_token.outputs.token }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Generate Token
+        uses: tibdex/github-app-token@v1
+        id: generate_token
+        with:
+          app_id: ${{ secrets.BOT_APP_ID }}
+          private_key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+
   changes:
     name: Get changes
     runs-on: ubuntu-22.04
@@ -29,6 +45,7 @@ jobs:
       - uses: dorny/paths-filter@v2
         id: filter
         with:
+          base: main
           list-files: json
           filters: |
             changed:
@@ -48,22 +65,16 @@ jobs:
     name: Run hadolint
     runs-on: ubuntu-22.04
     needs:
+      - token
       - changes
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Generate Token
-        uses: tibdex/github-app-token@v1
-        id: generate-token
-        with:
-          app_id: ${{ secrets.BOT_APP_ID }}
-          private_key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-
       - name: hadolint
         uses: reviewdog/action-hadolint@v1.33.0
         with:
-          github_token: ${{ steps.generate-token.outputs.token }}
+          github_token: ${{ needs.token.outputs.token }}
           reporter: github-pr-review
           filter_mode: diff_context
           fail_on_error: true
@@ -72,6 +83,7 @@ jobs:
     name: Build and test
     runs-on: ubuntu-22.04
     needs:
+      - token
       - changes
       - lint
     if: needs.changes.outputs.matrix.containers != '[]'
@@ -82,32 +94,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Generate Token
-        uses: tibdex/github-app-token@v1
-        id: generate-token
-        with:
-          app_id: ${{ secrets.BOT_APP_ID }}
-          private_key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-
-      - name: Setup workflow Variables
+      - name: Setup workflow variables
         id: vars
         shell: bash
         run: |
-          BUILD_DATE=$(date --rfc-3339=seconds --utc)
-          echo ::set-output name=build_date::${BUILD_DATE}
-          if [[ -f ./apps/${{ matrix.container }}/Dockerfile ]]; then
-            CATEGORY=apps
+          build_date=$(date --rfc-3339=seconds --utc)
+          echo ::set-output name=build_date::"${build_date}"
+          if [[ -f "./apps/${{ matrix.container }}/Dockerfile" ]]; then
+            category=apps
           else
-            CATEGORY=base
+            category=base
           fi
-          echo ::set-output name=category::${CATEGORY}
-          VERSION=$(cat ./${CATEGORY}/${{ matrix.container }}/VERSION)
-          echo ::set-output name=version::${VERSION}
-          PLATFORM=$(cat ./${CATEGORY}/${{ matrix.container }}/PLATFORM)
-          echo ::set-output name=platform::${PLATFORM}
-          if [[ -f ./${CATEGORY}/${{ matrix.container }}/goss.yaml ]]; then
+          echo ::set-output name=category::"${category}"
+          VERSION=$(cat "./${category}/${{ matrix.container }}/VERSION")
+          echo ::set-output name=version::"${VERSION}"
+          PLATFORM=$(cat "./${category}/${{ matrix.container }}/PLATFORM")
+          echo ::set-output name=platform::"${PLATFORM}"
+          if [[ -f "./${category}/${{ matrix.container }}/goss.yaml" ]]; then
             echo ::set-output name=goss_enabled::true
-            echo ::set-output name=goss_config::./${CATEGORY}/${{ matrix.container }}/goss.yaml
+            echo ::set-output name=goss_config::"./${category}/${{ matrix.container }}/goss.yaml"
           else
             echo ::set-output name=goss_enabled::false
           fi
@@ -132,8 +137,8 @@ jobs:
         if: github.event_name != 'pull_request'
         with:
           registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ steps.generate-token.outputs.token }}
+          username: ${{ github.actor }}
+          password: ${{ needs.token.outputs.token }}
 
       - name: Set up Docker Buildx
         id: buildx
@@ -148,7 +153,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           build-args: |
-            VERSION=${{ steps.vars.outputs.version }} }}
+            VERSION=${{ steps.vars.outputs.version }}
           context: .
           file: ${{ steps.vars.outputs.category }}/${{ matrix.container }}/Dockerfile
           load: true
@@ -157,7 +162,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           secrets: |
-            "github_token=${{ steps.generate-token.outputs.token }}"
+            github_token=${{ needs.token.outputs.token }}
 
       - name: Run GOSS tests
         id: goss
@@ -197,4 +202,4 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           secrets: |
-            "github_token=${{ steps.generate-token.outputs.token }}"
+            github_token=${{ needs.token.outputs.token }}
