@@ -74,7 +74,7 @@ jobs:
     needs:
       - changes
       - lint
-    # if: ${{ needs.changes.outputs.matrix == 'true' }}
+    if: needs.changes.outputs.matrix == 'true'
     strategy:
       matrix: ${{ fromJson(needs.changes.outputs.matrix) }}
       fail-fast: false
@@ -129,7 +129,7 @@ jobs:
 
       - name: Login to GHCR
         uses: docker/login-action@v2
-        if: github.event_name != 'pull_request'
+        if: ${{ github.event_name != 'pull_request' }}
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -157,7 +157,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           secrets: |
-            github_token=${{ steps.generate-token.outputs.token }}
+            "github_token=${{ steps.generate-token.outputs.token }}"
 
       - name: Run GOSS tests
         id: goss
@@ -197,4 +197,4 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           secrets: |
-            github_token=${{ steps.generate-token.outputs.token }}
+            "github_token=${{ steps.generate-token.outputs.token }}"
