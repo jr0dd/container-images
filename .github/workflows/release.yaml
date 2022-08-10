@@ -16,12 +16,16 @@ on:
       - 'apps/**'
       - 'base/**'
 
+env:
+  # renovate: datasource=github-releases depName=aelsabbahy/goss
+  GOSS_VERSION: 0.3.18
+
 jobs:
   changes:
     name: Get changes
     runs-on: ubuntu-22.04
     outputs:
-      matrix: "{\"container\": ${{ steps.reduce.outputs.containers }} }"
+      container: ${{ steps.reduce.outputs.containers }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -36,7 +40,7 @@ jobs:
       - uses: dorny/paths-filter@v2
         id: filter
         with:
-          base: main
+          base: HEAD
           token: ${{ steps.generate-token.outputs.token }}
           list-files: json
           filters: |
@@ -85,7 +89,8 @@ jobs:
       - changes
       - lint
     strategy:
-      matrix: ${{ fromJson(needs.changes.outputs.matrix) }}
+      matrix:
+        container: ${{ fromJson(needs.changes.outputs.container) }}
       fail-fast: false
     steps:
       - name: Checkout
@@ -115,6 +120,7 @@ jobs:
           platform=$(cat ./$category/${{ matrix.container }}/PLATFORM)
           echo "::set-output name=platform::$platform"
           if [[ -f "./$category/${{ matrix.container }}/goss.yaml" ]]; then
+            echo "::set-output name=goss_version::v${{ env.GOSS_VERSION }}"
             echo "::set-output name=goss_enabled::true"
             echo "::set-output name=goss_config::./$category/${{ matrix.container }}/goss.yaml"
           else
@@ -149,8 +155,7 @@ jobs:
         uses: e1himself/goss-installation-action@v1.0.4
         if: steps.vars.outputs.goss_enabled == 'true'
         with:
-          # renovate: datasource=github-releases depName=aelsabbahy/goss
-          version: v0.3.18
+          version: ${{ steps.vars.outputs.goss_version }}
 
       - name: Build container image for testing
         if: steps.vars.outputs.goss_enabled == 'true'
@@ -175,8 +180,8 @@ jobs:
         shell: bash
         env:
           CONTAINER_RUNTIME: docker
-          NODE_ENV: staging
-          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+          # NODE_ENV: staging
+          # SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
           GOSS_FILE: ${{ steps.vars.outputs.goss_config }}
           GOSS_OPTS: |-
             --retry-timeout 60s --sleep 2s --color --format documentation
