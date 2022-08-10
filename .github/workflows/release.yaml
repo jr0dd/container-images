@@ -25,7 +25,7 @@ jobs:
     name: Get changes
     runs-on: ubuntu-22.04
     outputs:
-      container: ${{ steps.reduce.outputs.containers }}
+      matrix: "{\"container\": ${{ steps.reduce.outputs.containers }} }"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -49,8 +49,6 @@ jobs:
                 - 'apps/**'
                 - 'base/**'
 
-      - if: steps.filter.outputs.changed != 'true'
-        run: echo "::warning title='No changes detected'::'No files have been modified since last run'"
       - id: get-changes
         run: echo '${{ toJson(steps.filter.outputs) }}' > changes.json
       - id: reduce
@@ -89,8 +87,7 @@ jobs:
       - changes
       - lint
     strategy:
-      matrix:
-        container: ${{ fromJson(needs.changes.outputs.container) }}
+      matrix: ${{ fromJson(needs.changes.outputs.matrix) }}
       fail-fast: false
     steps:
       - name: Checkout
