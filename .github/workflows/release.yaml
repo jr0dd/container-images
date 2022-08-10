@@ -17,7 +17,7 @@ on:
 
 env:
   # renovate: datasource=github-releases depName=aelsabbahy/goss
-  GOSS_VERSION: v0.3.18
+  GOSS_VERSION: 0.3.18
 
 jobs:
   changes:
