@@ -1,4 +1,4 @@
-FROM ghcr.io/jr0dd/ubuntu-jammy:rolling@sha256:5a9f479346df446cb50e4852deb165d9656ed91493a2361631a9650a8e9c9f34
+FROM ghcr.io/jr0dd/ubuntu-jammy:rolling@sha256:77f2a89a9e04ae3f6735fe1d2b745114bbae685e549d7db4efa617849ca2dce1
 
 ARG VERSION
 
