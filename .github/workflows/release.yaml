@@ -85,7 +85,6 @@ jobs:
   build:
     name: Build and test
     runs-on: ubuntu-22.04
-    if: needs.changes.outputs.matrix != '[]'
     needs:
       - changes
       - lint
@@ -121,7 +120,7 @@ jobs:
           platform=$(cat ./$category/${{ matrix.container }}/PLATFORM)
           echo "::set-output name=platform::$platform"
           if [[ -f "./$category/${{ matrix.container }}/goss.yaml" ]]; then
-            echo "::set-output name=goss_version::${{ env.GOSS_VERSION }}"
+            echo "::set-output name=goss_version::v${{ env.GOSS_VERSION }}"
             echo "::set-output name=goss_enabled::true"
             echo "::set-output name=goss_config::./$category/${{ matrix.container }}/goss.yaml"
           else
@@ -142,7 +141,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ steps.generate-token.outputs.token }}
 
       - name: Set up Docker Buildx
         id: buildx
