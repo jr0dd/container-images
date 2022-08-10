@@ -12,6 +12,12 @@ ENV \
   HOME=/config
 
 RUN \
+  apt -qq update \
+  && apt install -y \
+    git \
+    gnupg
+
+RUN \
   curl https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor >/usr/share/keyrings/chrome-keyring.gpg - \
   && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/chrome-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" \
     | tee /etc/apt/sources.list.d/google-chrome.list \
