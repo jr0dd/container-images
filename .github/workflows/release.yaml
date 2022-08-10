@@ -18,7 +18,7 @@ on:
 
 env:
   # renovate: datasource=github-releases depName=aelsabbahy/goss
-  GOSS_VERSION: 0.3.18
+  GOSS_VERSION: v0.3.18
 
 jobs:
   changes:
@@ -120,7 +120,7 @@ jobs:
           platform=$(cat ./$category/${{ matrix.container }}/PLATFORM)
           echo "::set-output name=platform::$platform"
           if [[ -f "./$category/${{ matrix.container }}/goss.yaml" ]]; then
-            echo "::set-output name=goss_version::v${{ env.GOSS_VERSION }}"
+            echo "::set-output name=goss_version::${{ env.GOSS_VERSION }}"
             echo "::set-output name=goss_enabled::true"
             echo "::set-output name=goss_config::./$category/${{ matrix.container }}/goss.yaml"
           else
