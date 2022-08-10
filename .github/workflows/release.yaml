@@ -1,10 +1,9 @@
 name: Release
 
 on:
-  workflow_run:
-    workflows: ['Update']
-    types:
-      - completed
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */3 * * *"
   push:
     branches:
       - main
@@ -24,8 +23,11 @@ jobs:
   changes:
     name: Get changes
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      packages: write
     outputs:
-      matrix: "{\"container\": ${{ steps.reduce.outputs.containers }} }"
+      matrix: ${{ steps.reduce.outputs.containers }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -40,7 +42,7 @@ jobs:
       - uses: dorny/paths-filter@v2
         id: filter
         with:
-          base: HEAD
+          base: main
           token: ${{ steps.generate-token.outputs.token }}
           list-files: json
           filters: |
@@ -83,11 +85,13 @@ jobs:
   build:
     name: Build and test
     runs-on: ubuntu-22.04
+    if: needs.changes.outputs.matrix != '[]'
     needs:
       - changes
       - lint
     strategy:
-      matrix: ${{ fromJson(needs.changes.outputs.matrix) }}
+      matrix:
+        container: ${{ fromJson(needs.changes.outputs.matrix) }}
       fail-fast: false
     steps:
       - name: Checkout

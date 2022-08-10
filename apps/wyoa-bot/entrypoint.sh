@@ -13,4 +13,4 @@ for i in config/*.yaml; do
     mv "$i" "${i/.sops.yaml/.yaml}"
 done
 
-exec node --loader esm-module-alias/loader --no-warnings ./index.js
+exec node --loader esm-module-alias/loader --no-warnings ./index.js "$@"
