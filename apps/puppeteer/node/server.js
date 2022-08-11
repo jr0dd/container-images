@@ -14,7 +14,6 @@ import chalk from 'chalk'
     '--disable-site-isolation-trials',
     '--disable-web-security',
     '--single-process',
-    '--use-gl=eg',
     '--remote-debugging-address=0.0.0.0',
     '--remote-debugging-port=4000'
   ]
