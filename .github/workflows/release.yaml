@@ -30,10 +30,12 @@ jobs:
     needs:
       - update
     outputs:
-      containers: ${{ steps.reduce.outputs.containers }}
+      container: ${{ steps.parse.outputs.container }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 3
 
       - name: Generate token
         uses: tibdex/github-app-token@v1
@@ -51,15 +53,16 @@ jobs:
           filters: |
             changed:
               - added|modified:
-                - 'apps/**'
-                - 'base/**'
+                  - 'apps/**'
+                  - 'base/**'
 
-      - id: get-changes
-        run: echo '${{ toJson(steps.filter.outputs) }}' > changes.json
-      - id: reduce
+      - id: parse
+        if: steps.filter.outputs.changed == 'true'
+        shell: bash
         run: |
-          containers=$(jq --raw-output '.changed_files | fromjson | .[] |= sub("(?<filepath>(?<first_directory>(?<root1>[/]?)[^/]+/)(?<second_directory>(?<root2>[/]?)[^/]+)(?<extra_paths>.+))"; "\(.second_directory)") | unique' changes.json)
-          echo ::set-output name=containers::$containers
+          echo '${{ toJson(steps.filter.outputs) }}' > changes.json
+          container=$(jq --raw-output '.changed_files | fromjson | .[] |= sub("(?<filepath>(?<first_directory>(?<root1>[/]?)[^/]+/)(?<second_directory>(?<root2>[/]?)[^/]+)(?<extra_paths>.+))"; "\(.second_directory)") | unique' changes.json)
+          echo ::set-output name=container::$container
 
   lint:
     name: Run hadolint
@@ -78,7 +81,7 @@ jobs:
           private_key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
 
       - name: hadolint
-        uses: reviewdog/action-hadolint@v1.33.0
+        uses: reviewdog/action-hadolint@v1
         with:
           github_token: ${{ steps.generate-token.outputs.token }}
           reporter: github-pr-review
@@ -87,14 +90,14 @@ jobs:
 
   build:
     name: Build and test
-    if: fromJson(needs.changes.outputs.containers) != '[]'
+    if: fromJson(needs.changes.outputs.container) != '[]'
     runs-on: ubuntu-22.04
     needs:
       - changes
       - lint
     strategy:
       matrix:
-        container: ${{ fromJson(needs.changes.outputs.containers) }}
+        container: ${{ fromJson(needs.changes.outputs.container) }}
       fail-fast: false
     steps:
       - name: Checkout
@@ -205,6 +208,7 @@ jobs:
             VERSION=${{ steps.vars.outputs.version }}
           labels: |
             org.opencontainers.image.created=${{ steps.vars.outputs.build_date }}
+            org.opencontainers.image.revision=${{ github.sha }}
           context: .
           platforms: ${{ steps.vars.outputs.platform }}
           file: ${{ steps.vars.outputs.category }}/${{ matrix.container }}/Dockerfile
