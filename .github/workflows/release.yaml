@@ -21,10 +21,8 @@ env:
 
 jobs:
   update:
-    name: Fetch Updates
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: ./.github/workflows/update.yaml
+    uses: jr0dd/container-images/.github/workflows/update.yaml@main
+    secrets: inherit
 
   changes:
     name: Get changes
@@ -37,7 +35,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Generate Token
+      - name: Generate token
         uses: tibdex/github-app-token@v1
         id: generate-token
         with:
@@ -72,7 +70,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Generate Token
+      - name: Generate token
         uses: tibdex/github-app-token@v1
         id: generate-token
         with:
@@ -101,7 +99,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Generate Token
+      - name: Generate token
         uses: tibdex/github-app-token@v1
         id: generate-token
         with:
@@ -198,7 +196,7 @@ jobs:
             dgoss run ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:test
           fi
 
-      - name: Build and Push
+      - name: Build and push
         id: release
         uses: docker/build-push-action@v3
         with:
