@@ -48,7 +48,8 @@ jobs:
       - uses: dorny/paths-filter@v2
         id: filter
         with:
-          base: main
+          base: HEAD
+          ref: main
           token: ${{ steps.generate-token.outputs.token }}
           list-files: json
           filters: |
