@@ -63,4 +63,5 @@ jobs:
             git push
             sha=$(git log -1 --format='%H')
             echo "::set-output name=sha::$sha"
+            echo "::set-output name=push::true"
           fi
