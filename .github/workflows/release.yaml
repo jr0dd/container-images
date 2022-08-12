@@ -46,8 +46,7 @@ jobs:
       - uses: dorny/paths-filter@v2
         id: filter
         with:
-          base: main
-          ref: ${{ needs.update.outputs.sha }}
+          base: ${{ needs.update.outputs.sha }}
           list-files: json
           filters: |
             addedOrModified:

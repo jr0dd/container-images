@@ -5,6 +5,10 @@ on:
   schedule:
     - cron: "0 */2 * * *"
   workflow_call:
+    outputs:
+      sha:
+        description: "SHA after versions files have been updated"
+        value: ${{ jobs.update.update-versions.outputs.sha }}
 
 jobs:
   update:
@@ -12,6 +16,7 @@ jobs:
     runs-on: ubuntu-22.04
     outputs:
       sha: ${{ steps.update-versions.outputs.sha }}
+      push: ${{ steps.update-versions.outputs.push }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -63,5 +68,4 @@ jobs:
             git push
             sha=$(git log -1 --format='%H')
             echo "::set-output name=sha::$sha"
-            echo "::set-output name=push::true"
           fi
