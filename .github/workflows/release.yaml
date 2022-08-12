@@ -2,9 +2,9 @@ name: Release
 
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: ['Update']
-    types: [completed]
+  # workflow_run:
+  #   workflows: ['Update']
+  #   types: [completed]
   push:
     branches:
       - main
@@ -47,6 +47,7 @@ jobs:
         id: filter
         with:
           base: main
+          ref: ${{ github.sha }}
           list-files: json
           filters: |
             addedOrModified:
