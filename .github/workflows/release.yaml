@@ -30,7 +30,7 @@ jobs:
     needs:
       - update
     outputs:
-      container: ${{ steps.parse.outputs.container }}
+      image: ${{ steps.parse.outputs.image }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -45,12 +45,10 @@ jobs:
       - uses: dorny/paths-filter@v2
         id: filter
         with:
-          base: main
-          ref: HEAD
-          token: ${{ steps.generate-token.outputs.token }}
+          base: HEAD
           list-files: json
           filters: |
-            changed:
+            addedOrModified:
               - added|modified:
                   - 'apps/**'
                   - 'base/**'
@@ -58,12 +56,12 @@ jobs:
       - id: parse
         shell: bash
         run: |
-          if [[ steps.filter.outputs.changed == 'true' ]]; then
-            echo '${{ toJson(steps.filter.outputs) }}' > changes.json
-            container=$(jq --raw-output '.changed_files | fromjson | .[] |= sub("(?<filepath>(?<first_directory>(?<root1>[/]?)[^/]+/)(?<second_directory>(?<root2>[/]?)[^/]+)(?<extra_paths>.+))"; "\(.second_directory)") | unique' changes.json)
-            echo "::set-output name=container::$container"
+          if [[ ${{ steps.filter.outputs.addedOrModified }} == 'true' ]]; then
+            paths='${{ steps.filter.outputs.addedOrModified_files }}'
+            image=$(echo $paths | jq --raw-output -c 'map(. |= split("/")[1]) | unique')
+            echo "::set-output name=image::$image"
           else
-            echo "::set-output name=container::[]"
+            echo "::set-output name=image::[]"
           fi
 
   lint:
@@ -92,14 +90,14 @@ jobs:
 
   build:
     name: Build and test
-    if: needs.changes.outputs.container != '[]'
+    if: needs.changes.outputs.image != '[]'
     runs-on: ubuntu-22.04
     needs:
       - changes
       - lint
     strategy:
       matrix:
-        container: ${{ fromJson(needs.changes.outputs.container) }}
+        image: ${{ needs.changes.outputs.image }}
       fail-fast: false
     steps:
       - name: Checkout
@@ -118,20 +116,20 @@ jobs:
         run: |
           build_date=$(date --rfc-3339=seconds --utc)
           echo "::set-output name=build_date::$build_date"
-          if [[ -f "./apps/${{ matrix.container }}/Dockerfile" ]]; then
+          if [[ -f "./apps/${{ matrix.image }}/Dockerfile" ]]; then
             category=apps
           else
             category=base
           fi
           echo "::set-output name=category::$category"
-          version=$(cat ./$category/${{ matrix.container }}/VERSION)
+          version=$(cat ./$category/${{ matrix.image }}/VERSION)
           echo "::set-output name=version::$version"
-          platform=$(cat ./$category/${{ matrix.container }}/PLATFORM)
+          platform=$(cat ./$category/${{ matrix.image }}/PLATFORM)
           echo "::set-output name=platform::$platform"
-          if [[ -f "./$category/${{ matrix.container }}/goss.yaml" ]]; then
+          if [[ -f "./$category/${{ matrix.image }}/goss.yaml" ]]; then
             echo "::set-output name=goss_version::v${{ env.GOSS_VERSION }}"
             echo "::set-output name=goss_enabled::true"
-            echo "::set-output name=goss_config::./$category/${{ matrix.container }}/goss.yaml"
+            echo "::set-output name=goss_config::./$category/${{ matrix.image }}/goss.yaml"
           else
             echo "::set-output name=goss_enabled::false"
           fi
@@ -173,11 +171,11 @@ jobs:
           build-args: |
             VERSION=${{ steps.vars.outputs.version }}
           context: .
-          file: ${{ steps.vars.outputs.category }}/${{ matrix.container }}/Dockerfile
+          file: ${{ steps.vars.outputs.category }}/${{ matrix.image }}/Dockerfile
           platforms: linux/amd64
           load: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:test
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:test
           cache-from: type=gha
           cache-to: type=gha,mode=max
           secrets: |
@@ -189,17 +187,15 @@ jobs:
         shell: bash
         env:
           CONTAINER_RUNTIME: docker
-          # NODE_ENV: staging
-          # SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
           GOSS_FILE: ${{ steps.vars.outputs.goss_config }}
           GOSS_OPTS: |-
             --retry-timeout 60s --sleep 2s --color --format documentation
         run: |
-          if [[ ${{ matrix.container }} == wyoa-bot ]]; then
+          if [[ ${{ matrix.image }} == wyoa-bot ]]; then
             dgoss run -e SOPS_AGE_KEY=${{ secrets.SOPS_AGE_KEY }} -e NODE_ENV=staging \
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:test
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:test
           else
-            dgoss run ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:test
+            dgoss run ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:test
           fi
 
       - name: Build and push
@@ -213,12 +209,12 @@ jobs:
             org.opencontainers.image.revision=${{ github.sha }}
           context: .
           platforms: ${{ steps.vars.outputs.platform }}
-          file: ${{ steps.vars.outputs.category }}/${{ matrix.container }}/Dockerfile
+          file: ${{ steps.vars.outputs.category }}/${{ matrix.image }}/Dockerfile
           push: ${{ steps.vars.outputs.push }}
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:latest
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:rolling
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:v${{ steps.vars.outputs.version }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:latest
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:rolling
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:v${{ steps.vars.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           secrets: |
