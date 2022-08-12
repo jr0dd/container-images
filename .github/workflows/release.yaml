@@ -34,9 +34,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          ref: main
-          fetch-depth: 0
 
       - name: Generate token
         uses: tibdex/github-app-token@v1
@@ -48,8 +45,8 @@ jobs:
       - uses: dorny/paths-filter@v2
         id: filter
         with:
-          base: HEAD
-          ref: main
+          base: main
+          ref: HEAD
           token: ${{ steps.generate-token.outputs.token }}
           list-files: json
           filters: |
@@ -59,12 +56,15 @@ jobs:
                   - 'base/**'
 
       - id: parse
-        if: steps.filter.outputs.changed == 'true'
         shell: bash
         run: |
-          echo '${{ toJson(steps.filter.outputs) }}' > changes.json
-          container=$(jq --raw-output '.changed_files | fromjson | .[] |= sub("(?<filepath>(?<first_directory>(?<root1>[/]?)[^/]+/)(?<second_directory>(?<root2>[/]?)[^/]+)(?<extra_paths>.+))"; "\(.second_directory)") | unique' changes.json)
-          echo ::set-output name=container::$container
+          if [[ steps.filter.outputs.changed == 'true' ]]; then
+            echo '${{ toJson(steps.filter.outputs) }}' > changes.json
+            container=$(jq --raw-output '.changed_files | fromjson | .[] |= sub("(?<filepath>(?<first_directory>(?<root1>[/]?)[^/]+/)(?<second_directory>(?<root2>[/]?)[^/]+)(?<extra_paths>.+))"; "\(.second_directory)") | unique' changes.json)
+            echo "::set-output name=container::$container"
+          else
+            echo "::set-output name=container::[]"
+          fi
 
   lint:
     name: Run hadolint
@@ -92,7 +92,7 @@ jobs:
 
   build:
     name: Build and test
-    if: needs.changes.outputs != ''
+    if: needs.changes.outputs.container != '[]'
     runs-on: ubuntu-22.04
     needs:
       - changes
