@@ -47,7 +47,7 @@ jobs:
         id: filter
         with:
           base: main
-          ref: ${{ github.sha }}
+          ref: ${{ needs.update.outputs.sha }}
           list-files: json
           filters: |
             addedOrModified:

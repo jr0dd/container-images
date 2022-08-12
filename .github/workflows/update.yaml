@@ -10,6 +10,8 @@ jobs:
   update:
     name: Fetch updates
     runs-on: ubuntu-22.04
+    outputs:
+      sha: ${{ steps.update-versions.outputs.sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -59,4 +61,6 @@ jobs:
             git add -A
             git commit -sam 'chore: add new release versions' || exit 0
             git push
+            sha=$(git log -1 --format='%H')
+            echo "::set-output name=sha::$sha"
           fi
