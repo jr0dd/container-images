@@ -15,7 +15,7 @@ import chalk from 'chalk'
     '--disable-web-security',
     '--single-process',
     '--remote-debugging-address=0.0.0.0',
-    '--remote-debugging-port=4000'
+    '--remote-debugging-port=9222'
   ]
 
   const args = process.argv.slice(2)
@@ -23,15 +23,17 @@ import chalk from 'chalk'
     defaultArgs.push(arg)
   })
 
-  await puppeteer.launch({
+  const options = {
     headless: true,
     dumpio: true,
     ignoreHTTPSErrors: true,
     args: defaultArgs
-  })
-    .catch((err) => {
-      console.error(chalk.redBright(err))
-    })
+  }
 
-  console.log(chalk.magentaBright('<== Puppeteer server is running ==>'))
+  try {
+    await puppeteer.launch(options)
+    console.log(chalk.magentaBright('<== Puppeteer server is running ==>'))
+  } catch (err) {
+    console.error(chalk.redBright(err))
+  }
 })()

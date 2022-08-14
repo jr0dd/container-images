@@ -4,9 +4,9 @@ process:
     running: true
 
 port:
-  tcp:4000:
+  tcp:9222:
     listening: true
 
 http:
-  http://localhost:4000:
+  http://localhost:9222:
     status: 200

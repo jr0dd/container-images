@@ -61,7 +61,7 @@ RUN \
 
 USER k8s
 
-EXPOSE 4000
+EXPOSE 9222
 
 COPY ./apps/puppeteer/shim /shim
 COPY ./apps/puppeteer/entrypoint.sh /entrypoint.sh
