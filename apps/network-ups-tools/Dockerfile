@@ -1,4 +1,4 @@
-FROM ghcr.io/jr0dd/ubuntu-jammy:rolling@sha256:640fba9c7ed95d2e0f97d33ece8ad229edcc61d523edd30263365c4e7c64e464
+FROM ghcr.io/jr0dd/ubuntu-jammy:rolling@sha256:be7d116ed69c6065d58ab6d23515220641575570e04d08182399e51c24bcaebb
 
 USER root
 
