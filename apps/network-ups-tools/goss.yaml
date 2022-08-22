@@ -1,8 +1,0 @@
----
-process:
-  upsd:
-    running: true
-
-port:
-  tcp:3493:
-    listening: true
