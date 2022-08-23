@@ -1,8 +1,0 @@
----
-process:
-  node:
-    running: true
-
-http:
-  http://localhost:3000/health:
-    status: 200

@@ -28,8 +28,7 @@ jobs:
   changes:
     name: Get changes
     runs-on: ubuntu-22.04
-    needs:
-      - update
+    needs: update
     outputs:
       image: ${{ steps.parse.outputs.image }}
     steps:
@@ -69,8 +68,7 @@ jobs:
   lint:
     name: Run hadolint
     runs-on: ubuntu-22.04
-    needs:
-      - changes
+    needs: changes
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -193,12 +191,7 @@ jobs:
           GOSS_OPTS: |-
             --retry-timeout 60s --sleep 2s --color --format documentation
         run: |
-          if [[ ${{ matrix.image }} == wyoa-bot ]]; then
-            dgoss run -e SOPS_AGE_KEY=${{ secrets.SOPS_AGE_KEY }} -e NODE_ENV=staging \
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:test
-          else
             dgoss run ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:test
-          fi
 
       - name: Build and push
         id: release
