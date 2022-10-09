@@ -2,9 +2,9 @@ name: Release
 
 on:
   workflow_dispatch:
-  # workflow_run:
-  #   workflows: ['Update']
-  #   types: [completed]
+  workflow_run:
+    workflows: ['Update']
+    types: [completed]
   push:
     branches:
       - main
@@ -21,10 +21,6 @@ env:
   GOSS_VERSION: 0.3.18
 
 jobs:
-  update:
-    uses: jr0dd/container-images/.github/workflows/update.yaml@main
-    secrets: inherit
-
   changes:
     name: Get changes
     runs-on: ubuntu-22.04
