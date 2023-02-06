@@ -23,15 +23,13 @@ RUN \
     | tee /etc/apt/sources.list.d/google-chrome.list \
   && apt -qq update \
   && apt install -y \
-    git \
-    gnupg \
+    google-chrome-stable \
     fonts-ipafont-gothic \
     fonts-wqy-zenhei \
     fonts-thai-tlwg \
     fonts-kacst \
     fonts-freefont-ttf \
-    libxss1 \
-    google-chrome-stable
+    libxss1
 
 COPY ./apps/puppeteer/node /app
 
