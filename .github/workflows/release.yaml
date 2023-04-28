@@ -51,10 +51,9 @@ jobs:
         run: |
           if [[ ${{ steps.filter.outputs.addedOrModified }} == 'true' ]]; then
             paths='${{ steps.filter.outputs.addedOrModified_files }}'
-            image=$(echo $paths | jq --raw-output -c 'map(. |= split("/")[1]) | unique')
-            echo "::set-output name=image::$image"
+            echo "image=$(echo $paths | jq --raw-output -c 'map(. |= split("/")[1]) | unique')" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=image::[]"
+            echo "image=[]" >> $GITHUB_OUTPUT
           fi
 
   lint:
@@ -104,31 +103,26 @@ jobs:
 
       - name: Setup workflow variables
         id: vars
-        shell: bash
         run: |
-          build_date=$(date --rfc-3339=seconds --utc)
-          echo "::set-output name=build_date::$build_date"
+          echo "build_date=$(date --rfc-3339=seconds --utc)" >> $GITHUB_OUTPUT
           if [[ -f "./apps/${{ matrix.image }}/Dockerfile" ]]; then
-            category=apps
+            echo "category=apps" >> $GITHUB_OUTPUT
           else
-            category=base
+            echo "category=base" >> $GITHUB_OUTPUT
           fi
-          echo "::set-output name=category::$category"
-          version=$(cat ./$category/${{ matrix.image }}/VERSION)
-          echo "::set-output name=version::$version"
-          platform=$(cat ./$category/${{ matrix.image }}/PLATFORM)
-          echo "::set-output name=platform::$platform"
+          echo "version=$(cat ./$category/${{ matrix.image }}/VERSION)" >> $GITHUB_OUTPUT
+          echo "platform=$(cat ./$category/${{ matrix.image }}/PLATFORM)" >> $GITHUB_OUTPUT
           if [[ -f "./$category/${{ matrix.image }}/goss.yaml" ]]; then
-            echo "::set-output name=goss_version::v${{ env.GOSS_VERSION }}"
-            echo "::set-output name=goss_enabled::true"
-            echo "::set-output name=goss_config::./$category/${{ matrix.image }}/goss.yaml"
+            echo "goss_version=v${{ env.GOSS_VERSION }}" >> $GITHUB_OUTPUT
+            echo "goss_enabled=true" >> $GITHUB_OUTPUT
+            echo "goss_config=./$category/${{ matrix.image }}/goss.yaml" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=goss_enabled::false"
+            echo "goss_enabled=false" >> $GITHUB_OUTPUT
           fi
           if [[ ${{ github.event_name }} == pull_request ]]; then
-            echo "::set-output name=push::false"
+            echo "push=false" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=push::true"
+            echo "push=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Set up QEMU
