@@ -34,14 +34,13 @@ RUN \
 COPY ./apps/puppeteer/node /app
 
 RUN \
-  curl -sL https://deb.nodesource.com/setup_18.x | bash - \
+  apt-get -qq update \
   && \
-  apt-get install -y \
-    nodejs \
-  && npm install npm@latest \
-  && npm install \
-    puppeteer@${VERSION} \
-    chalk@latest \
+  curl -sL https://deb.nodesource.com/setup_20.x | bash - \
+  && \
+  apt-get install -y nodejs \
+  && npm install --omit=dev --no-audit --no-fund \
+  && npm install puppeteer@${VERSION} \
   && \
   apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && apt-get autoremove -y \

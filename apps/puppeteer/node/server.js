@@ -32,7 +32,7 @@ import chalk from 'chalk'
 
   try {
     await puppeteer.launch(options)
-    console.log(chalk.magentaBright('<== Puppeteer server is running ==>'))
+    console.log(chalk.magentaBright('<=='), 'Puppeteer server is running', chalk.magentaBright('==>'))
   } catch (err) {
     console.error(chalk.redBright(err))
   }
