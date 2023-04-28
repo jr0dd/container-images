@@ -110,8 +110,8 @@ jobs:
           else
             echo "category=base" >> $GITHUB_OUTPUT
           fi
-          echo "version=$(cat ./$category/${{ matrix.image }}/VERSION)" >> $GITHUB_OUTPUT
-          echo "platform=$(cat ./$category/${{ matrix.image }}/PLATFORM)" >> $GITHUB_OUTPUT
+          echo "version=$(cat $category/${{ matrix.image }}/VERSION)" >> $GITHUB_OUTPUT
+          echo "platform=$(cat $category/${{ matrix.image }}/PLATFORM)" >> $GITHUB_OUTPUT
           if [[ -f "./$category/${{ matrix.image }}/goss.yaml" ]]; then
             echo "goss_version=v${{ env.GOSS_VERSION }}" >> $GITHUB_OUTPUT
             echo "goss_enabled=true" >> $GITHUB_OUTPUT
