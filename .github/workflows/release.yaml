@@ -106,10 +106,11 @@ jobs:
         run: |
           echo "build_date=$(date --rfc-3339=seconds --utc)" >> $GITHUB_OUTPUT
           if [[ -f "./apps/${{ matrix.image }}/Dockerfile" ]]; then
-            echo "category=apps"
+            category=apps
           else
-            echo "category=base"
+            category=base
           fi
+          echo "category=$category" >> $GITHUB_OUTPUT
           echo "version=$(cat ./$category/${{ matrix.image }}/VERSION)" >> $GITHUB_OUTPUT
           echo "platform=$(cat ./$category/${{ matrix.image }}/PLATFORM)" >> $GITHUB_OUTPUT
           if [[ -f "./$category/${{ matrix.image }}/goss.yaml" ]]; then
