@@ -3,17 +3,17 @@ import chalk from 'chalk'
 
 (async () => {
   const defaultArgs = [
+    '--no-sandbox',
     '--disable-dev-shm-usage',
     '--disable-setuid-sandbox',
-    '--no-sandbox',
+    '--disable-web-security',
+    '--disable-site-isolation-trials',
     '--disable-audio-output',
     '--disable-gpu',
     '--no-zygote',
-    '--disable-software-rasterizer',
-    '--disable-features=IsolateOrigins,site-per-process',
-    '--disable-site-isolation-trials',
-    '--disable-web-security',
-    '--single-process',
+    // '--disable-software-rasterizer',
+    // '--disable-features=IsolateOrigins,site-per-process',
+    // '--single-process',
     '--remote-debugging-address=0.0.0.0',
     '--remote-debugging-port=9222'
   ]
