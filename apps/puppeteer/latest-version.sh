@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-version=$(curl -sX GET "https://api.github.com/repos/puppeteer/puppeteer/tags" | jq --raw-output '.[0].name')
+version=$(curl -sX GET "https://api.github.com/repos/puppeteer/puppeteer/releases" | jq --raw-output '.[0].tag_name' 2>/dev/null)
 version="${version#*v}"
 version="${version#*release-}"
 printf "%s" "${version}"

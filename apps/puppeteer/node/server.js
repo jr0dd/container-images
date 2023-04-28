@@ -24,7 +24,7 @@ import chalk from 'chalk'
   })
 
   const options = {
-    headless: true,
+    headless: 'new',
     dumpio: true,
     ignoreHTTPSErrors: true,
     args: defaultArgs
