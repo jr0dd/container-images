@@ -6,4 +6,5 @@ source "/shim/vpn.sh"
 
 NODE_ENV=production
 
-exec node /app/server.js "$@"
+cd /app
+exec node ./server.js "$@"
