@@ -39,14 +39,12 @@ RUN \
   curl -sL https://deb.nodesource.com/setup_20.x | bash - \
   && \
   apt-get install -y nodejs \
-  && npm install --omit=dev --no-audit --no-fund \
-  && npm install puppeteer@${VERSION} \
   && \
   apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && apt-get autoremove -y \
   && apt-get clean \
   && chown -R k8s:k8s /app \
-  && chmod -R 755 /app \
+  && chmod -R 775 /app \
   && printf "umask %d" "${UMASK}" >> /etc/bash.bashrc \
   && update-ca-certificates \
   && \
@@ -57,6 +55,12 @@ RUN \
     /var/tmp/*
 
 USER k8s
+
+WORKDIR /app
+
+RUN \
+  npm install --omit=dev --no-audit --no-fund \
+  && npm install puppeteer@${VERSION}
 
 EXPOSE 9222
 
