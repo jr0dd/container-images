@@ -8,7 +8,7 @@
   },
   "type": "module",
   "dependencies": {
-    "puppeteer": "^19.11.0",
+    "puppeteer": "^20.0.0",
     "chalk": "^5.1.2"
   }
 }
