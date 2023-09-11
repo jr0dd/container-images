@@ -25,7 +25,7 @@ jobs:
       image: ${{ steps.parse.outputs.image }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Generate token
         uses: tibdex/github-app-token@v2
@@ -62,7 +62,7 @@ jobs:
     needs: changes
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Generate token
         uses: tibdex/github-app-token@v2
@@ -92,7 +92,7 @@ jobs:
       fail-fast: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Generate token
         uses: tibdex/github-app-token@v2
