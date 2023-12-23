@@ -146,7 +146,7 @@ jobs:
           driver-opts: image=moby/buildkit:latest
 
       - name: Set up Goss
-        uses: e1himself/goss-installation-action@v1.1.0
+        uses: e1himself/goss-installation-action@v1.2.1
         if: steps.vars.outputs.goss_enabled == 'true'
         with:
           version: ${{ steps.vars.outputs.goss_version }}
