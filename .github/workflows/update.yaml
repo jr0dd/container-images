@@ -3,7 +3,7 @@ name: Update
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 */2 * * *"
+    - cron: "0 */6 * * *"
   workflow_call:
     outputs:
       sha:
