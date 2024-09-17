@@ -34,7 +34,7 @@ jobs:
           app_id: ${{ secrets.BOT_APP_ID }}
           private_key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
 
-      - uses: dorny/paths-filter@v2
+      - uses: dorny/paths-filter@v3
         id: filter
         with:
           base: ${{ needs.update.outputs.sha }}
