@@ -19,7 +19,7 @@ jobs:
       push: ${{ steps.update-versions.outputs.push }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Generate token
         uses: tibdex/github-app-token@v2
